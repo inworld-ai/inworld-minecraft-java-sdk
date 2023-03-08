@@ -3,3 +3,27 @@ main: ai.inworld.minecraftsdk.InworldPlugin
 version: 0.0.1
 api-version: 1.19
 description: The Inworld Minecraft SDK
+depend: []
+commands:
+  inworld:
+    description: Inworld command
+    usage: /inworld <command>
+    permission: inworld.command
+permissions:
+  inworld.*:
+    description: Gives access to all Inworld features
+    default: true
+    children:
+      inworld.command: true
+      inworld.command.*: true
+  inworld.command:
+    description: Allows usage of the command /inworld
+    default: true
+  inworld.command.*:
+    description: Allows usage of all /inworld commands
+    default: op
+    children:
+      inworld.command.api: true
+      inworld.command.help: true
+      inworld.command.register: true
+      inworld.command.scene: true

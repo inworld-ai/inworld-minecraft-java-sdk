@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public interface SubCommand {
+public interface Command {
 
     void perform(Player player, String[] args);
     void performConsole(CommandSender sender, String[] args);

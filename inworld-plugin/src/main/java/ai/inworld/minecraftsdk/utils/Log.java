@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static ai.inworld.minecraftsdk.Constants.pluginName;
+import static ai.inworld.minecraftsdk.Constants.PLUGIN_NAME;
 
 public class Log {
 
@@ -39,15 +39,17 @@ public class Log {
     }
 
     private static String formatMessage(LogType logType, String msgInput) {
-        String msgOutput = "[" + pluginName + "] " + msgInput;
+
+        String msgOutput = "[" + PLUGIN_NAME + "] " + msgInput;
 
         switch(logType) {
             case Error:
-                return ChatColor.RED + msgOutput;
+                return msgOutput;
             case Info:
             default:
-                return ChatColor.GREEN + msgOutput;
+                return msgOutput;
         }
+        
     }
 
 }
