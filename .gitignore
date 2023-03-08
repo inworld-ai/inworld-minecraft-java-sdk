@@ -1,0 +1,14 @@
+server/
+
+inworld-plugin/target/
+inworld-plugin/pom.xml.tag
+inworld-plugin/pom.xml.releaseBackup
+inworld-plugin/pom.xml.versionsBackup
+inworld-plugin/pom.xml.next
+inworld-plugin/release.properties
+inworld-plugin/dependency-reduced-pom.xml
+inworld-plugin/buildNumber.properties
+inworld-plugin/.mvn/timing.properties
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+inworld-plugin/.mvn/wrapper/maven-wrapper.jar
+inworld-plugin/.vs/

@@ -1,0 +1,5 @@
+name: minecraft-sdk
+main: ai.inworld.minecraftsdk.Plugin
+version: 0.0.1
+api-version: 1.19
+description: The Inworld Minecraft SDK
