@@ -1,4 +1,4 @@
-server/
+server/*
 
 inworld-plugin/target/
 inworld-plugin/pom.xml.tag
