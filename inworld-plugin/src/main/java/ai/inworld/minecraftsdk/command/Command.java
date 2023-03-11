@@ -1,4 +1,4 @@
-package ai.inworld.minecraftsdk.commands;
+package ai.inworld.minecraftsdk.command;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

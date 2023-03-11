@@ -9,8 +9,8 @@ import ai.inworld.minecraftsdk.utils.NetUtils;
 
 
 import static ai.inworld.minecraftsdk.Constants.CONFIG_FILENAME;
-import static ai.inworld.minecraftsdk.utils.Log.logConsole;
-import static ai.inworld.minecraftsdk.utils.Log.LogType;
+import static ai.inworld.minecraftsdk.utils.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType;
 
 /*
  * inworld-sdk java plugin
@@ -31,13 +31,13 @@ public class InworldPlugin extends JavaPlugin
 
     getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
-    logConsole(LogType.Info, "inworld-sdk enabled");
+    LOG(LogType.Info, "inworld-sdk enabled");
 
   }
 
   public void onDisable()
   {
-    logConsole(LogType.Info, "inworld-sdk disabled");
+    LOG(LogType.Info, "inworld-sdk disabled");
   }
 
 }

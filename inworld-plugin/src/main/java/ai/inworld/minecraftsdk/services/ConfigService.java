@@ -5,10 +5,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
-import static ai.inworld.minecraftsdk.utils.Log.logConsole;
-import static ai.inworld.minecraftsdk.utils.Log.LogType.Error;
-import static ai.inworld.minecraftsdk.utils.Log.LogType.Info;
+import static ai.inworld.minecraftsdk.utils.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType.Error;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType.Info;
 
 public class ConfigService {
     
@@ -18,7 +19,7 @@ public class ConfigService {
 
     public static void load(File dataFolder, String filename) {
 
-        logConsole(Info, "Loading config file \"" + dataFolder.getPath() + "/" + filename + "\"");
+        LOG(Info, "Loading config file \"" + dataFolder.getPath() + "/" + filename + "\"");
 
         configFolderPath = dataFolder;
         configFile = new File(configFolderPath, filename);
@@ -27,12 +28,9 @@ public class ConfigService {
             try {
                 configFile.getParentFile().mkdirs();
                 configFile.createNewFile();
-                process();
-                config.set("server.api.dev", "http://localhost:3000");
-                config.set("server.api.prod", "");
-                save();
+                init();
             } catch (IOException e) {
-                logConsole(Error, "Could not create file \"" + dataFolder.getPath() + "/" + filename + "\"");
+                LOG(Error, "Could not create file \"" + dataFolder.getPath() + "/" + filename + "\"");
             }
         } else {
             process();
@@ -54,6 +52,14 @@ public class ConfigService {
 
     public static void reset() {
         process();
+    }
+
+    private static void init() {
+        process();
+        config.set("server.api.dev", "http://localhost:3000");
+        config.set("server.api.prod", "");
+        config.set("server.scenes", new HashMap<>());
+        save();
     }
 
     private static void process() {

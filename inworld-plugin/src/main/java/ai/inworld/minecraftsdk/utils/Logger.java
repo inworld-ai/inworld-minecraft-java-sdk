@@ -7,14 +7,14 @@ import org.bukkit.entity.Player;
 
 import static ai.inworld.minecraftsdk.Constants.PLUGIN_NAME;
 
-public class Log {
+public class Logger {
 
     public enum LogType {
         Info,
         Error
     }
 
-    public static void logConsole(LogType logType, String msgInput) {
+    public static void LOG(LogType logType, String msgInput) {
         String msgOutput = formatMessage(logType, msgInput);
 
         switch(logType) {
@@ -35,7 +35,7 @@ public class Log {
             sender.sendMessage(msgOutput);
         }
 
-        logConsole(logType, msgInput);
+        LOG(logType, msgInput);
     }
 
     private static String formatMessage(LogType logType, String msgInput) {

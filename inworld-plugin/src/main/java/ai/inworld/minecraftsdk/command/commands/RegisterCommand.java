@@ -1,13 +1,13 @@
-package ai.inworld.minecraftsdk.commands;
+package ai.inworld.minecraftsdk.command.commands;
 
-import ai.inworld.minecraftsdk.commands.Command;
-import ai.inworld.minecraftsdk.commands.CommandBase;
-
-import static ai.inworld.minecraftsdk.utils.Log.logConsole;
-import static ai.inworld.minecraftsdk.utils.Log.LogType;
+import static ai.inworld.minecraftsdk.utils.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import ai.inworld.minecraftsdk.command.Command;
+import ai.inworld.minecraftsdk.command.CommandBase;
 
 public class RegisterCommand extends CommandBase implements Command {
     
@@ -25,7 +25,7 @@ public class RegisterCommand extends CommandBase implements Command {
 
     @Override
     protected void processCommand(CommandSender sender, String[] args) {
-        logConsole(LogType.Info, "The registration command has been run");
+        LOG(LogType.Info, "The registration command has been run");
     }
 
 }

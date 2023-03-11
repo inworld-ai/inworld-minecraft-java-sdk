@@ -1,10 +1,12 @@
-package ai.inworld.minecraftsdk.commands;
+package ai.inworld.minecraftsdk.command.commands;
 
+import ai.inworld.minecraftsdk.command.Command;
+import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import static ai.inworld.minecraftsdk.utils.Log.logConsole;
-import static ai.inworld.minecraftsdk.utils.Log.LogType;
+import static ai.inworld.minecraftsdk.utils.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType;
 
 import org.bukkit.command.CommandSender;
 
@@ -35,13 +37,14 @@ public class SceneCommand extends CommandBase implements Command {
     @Override
     protected void processCommand(CommandSender sender, String[] args) {
         
-        logConsole(LogType.Info, "The scene command has been run");
+        LOG(LogType.Info, "The scene command has been run " + args.length);
 
         if ( args.length == minArgs ) {
             String command = args[1];
-            if (command == "list") {
+            if (command.equals("list")) {
+                MessageService.sendPlayerMessage(sender, "Scenes in system:");
                 for(String scene : ConfigService.getConfig().getConfigurationSection("server.scenes").getKeys(false)) {
-                    MessageService.sendPlayerMessage(sender, "Scene: " + scene);
+                    MessageService.sendPlayerMessage(sender, "- " + scene);
                 }
             }
             return;
@@ -50,7 +53,7 @@ public class SceneCommand extends CommandBase implements Command {
         if ( args.length == 3 ) {
             String command = args[1];
             String name = args[2];
-            if (command == "remove") {
+            if (command.equals("remove")) {
                 ConfigService.getConfig().set("server.scenes." + name, null);
                 ConfigService.save();
                 MessageService.sendPlayerMessage(sender, "Scene removed: " + name);
@@ -61,7 +64,7 @@ public class SceneCommand extends CommandBase implements Command {
         if ( args.length == 3 ) {
             String command = args[1];
             String name = args[2];
-            if (command == "characters") {
+            if (command.equals("characters")) {
                 MessageService.sendPlayerMessage(sender, "Scene character listing:" + name);
                 // ConfigService.getConfig().set("server.scenes." + name, null);
                 // ConfigService.save();
@@ -74,9 +77,9 @@ public class SceneCommand extends CommandBase implements Command {
             String command = args[1];
             String name = args[2];
             String sceneId = args[3];
-            logConsole(LogType.Info, command + " " + name + " " + sceneId);
+            LOG(LogType.Info, command + " " + name + " " + sceneId);
             if (command.equals("add")) {
-                logConsole(LogType.Info, command + " " + name + " " + sceneId);
+                LOG(LogType.Info, command + " " + name + " " + sceneId);
                 ConfigService.getConfig().set("server.scenes." + name, sceneId);
                 ConfigService.save();
                 MessageService.sendPlayerMessage(sender, "Scene added: " + name + " " + sceneId);

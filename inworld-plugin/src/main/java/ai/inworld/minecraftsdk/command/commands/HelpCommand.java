@@ -1,9 +1,11 @@
-package ai.inworld.minecraftsdk.commands;
+package ai.inworld.minecraftsdk.command.commands;
 
+import ai.inworld.minecraftsdk.command.Command;
+import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import static ai.inworld.minecraftsdk.utils.Log.logConsole;
-import static ai.inworld.minecraftsdk.utils.Log.LogType;
+import static ai.inworld.minecraftsdk.utils.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.Logger.LogType;
 
 import org.bukkit.command.CommandSender;
 
@@ -32,7 +34,7 @@ public class HelpCommand extends CommandBase implements Command {
     @Override
     protected void processCommand(CommandSender sender, String[] args) {
 
-        logConsole(LogType.Info, "HelpCommand processCommand");
+        LOG(LogType.Info, "HelpCommand processCommand");
 
         final List<Command> commandsWithPermission = new ArrayList<>();
         final List<String> commandsWithPermissionNames = new ArrayList<>();
