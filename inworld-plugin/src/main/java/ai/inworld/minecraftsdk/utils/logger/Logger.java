@@ -1,4 +1,4 @@
-package ai.inworld.minecraftsdk.utils;
+package ai.inworld.minecraftsdk.utils.logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

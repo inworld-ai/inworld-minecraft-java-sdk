@@ -5,10 +5,11 @@ import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import static ai.inworld.minecraftsdk.utils.Logger.LOG;
-import static ai.inworld.minecraftsdk.utils.Logger.LogType;
-
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class APICommand extends CommandBase implements Command {
     }
 
     @Override
-    protected void processCommand(CommandSender sender, String[] args) {
+    protected void processCommand(Player sender, String[] args) {
         
         LOG(LogType.Info, "The api command has been run");
 
@@ -74,7 +75,7 @@ public class APICommand extends CommandBase implements Command {
                 MessageService.sendPlayerMessage(sender, "API Host " + env + " has been set to " + host);
                 return;
             }
-            MessageService.sendPlayerMessage(sender, "ERROR API Enironment " + env + " is not valid. Must be dev or prod");
+            MessageService.sendPlayerMessage(sender, "ERROR API Enironment " + env + " is not valid. Must be \'dev\' or \'prod\'");
             return;
         }
 

@@ -5,8 +5,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import ai.inworld.minecraftsdk.command.commands.APICommand;
+import ai.inworld.minecraftsdk.command.commands.CharacterCommand;
 import ai.inworld.minecraftsdk.command.commands.HelpCommand;
 import ai.inworld.minecraftsdk.command.commands.RegisterCommand;
 import ai.inworld.minecraftsdk.command.commands.SceneCommand;
@@ -19,22 +22,26 @@ import java.util.List;
 
 import static ai.inworld.minecraftsdk.Constants.CONSOLE_UID;
 import static ai.inworld.minecraftsdk.Constants.PLUGIN_NAME;
-import static ai.inworld.minecraftsdk.utils.Logger.LOG;
-import static ai.inworld.minecraftsdk.utils.Logger.LogType;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 
-public class CommandService implements CommandExecutor, TabCompleter {
+public final class CommandService implements CommandExecutor, TabCompleter {
 
     private final String permission;
     private final List<ai.inworld.minecraftsdk.command.Command> commands;
 
     private final String noPermissionMessage = "You do not have permission to execute this command!";
 
-    public CommandService(String permission) {
+    public CommandService(JavaPlugin plugin) {
 
-        this.permission = permission;
+        plugin.getCommand("inworld").setExecutor(this);
+        plugin.getCommand("inworld").setTabCompleter(this);
+
+        this.permission = "inworld.command";
         this.commands = new ArrayList<>();
         this.commands.add(new APICommand());
+        this.commands.add(new CharacterCommand());
         this.commands.add(new RegisterCommand());
         this.commands.add(new SceneCommand());
         this.commands.add(new HelpCommand(this.commands));
@@ -57,7 +64,7 @@ public class CommandService implements CommandExecutor, TabCompleter {
                         if (sender instanceof Player) {
                             cmd.perform((Player) sender, args);
                         } else {
-                            cmd.performConsole(sender, args);
+                            cmd.performConsole((Player) sender, args);
                         }
                     } else {
                         messageSender(sender, noPermissionMessage);
@@ -66,7 +73,7 @@ public class CommandService implements CommandExecutor, TabCompleter {
             }
 
         } else {
-            commands.get(commands.size() - 1).performHelp(sender);
+            commands.get(commands.size() - 1).performHelp((Player) sender);
         }
 
         return true;
@@ -87,7 +94,7 @@ public class CommandService implements CommandExecutor, TabCompleter {
                 if (commandName.equalsIgnoreCase(cmd.getName())) {
                     foundCommand = true;
                     if (sender.hasPermission(cmd.getPermission())) {
-                        return cmd.getTabComplete(args.length);
+                        return cmd.getTabComplete(args, args.length);
                     }
                 }
             }

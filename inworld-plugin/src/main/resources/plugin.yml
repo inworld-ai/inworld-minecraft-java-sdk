@@ -24,6 +24,7 @@ permissions:
     default: op
     children:
       inworld.command.api: true
+      inworld.command.character: true
       inworld.command.help: true
       inworld.command.register: true
       inworld.command.scene: true

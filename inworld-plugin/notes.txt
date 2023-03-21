@@ -1,0 +1,5 @@
+- Removing characters from different worlds 
+- Villager Immortal as Command
+- Villager not taking damage as command
+- Villager Look at when Not Aware
+- Updating characters

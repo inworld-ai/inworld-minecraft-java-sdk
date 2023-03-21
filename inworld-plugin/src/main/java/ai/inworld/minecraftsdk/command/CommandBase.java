@@ -43,7 +43,7 @@ public abstract class CommandBase {
         return player.hasPermission(permission);
     }
 
-    public List<String> getTabComplete(int index) {
+    public List<String> getTabComplete(String[] args, int index) {
         return tabCompletes.get(index);
     }
 
@@ -56,7 +56,7 @@ public abstract class CommandBase {
         processCommand(player, args);
     }
 
-    public void performConsole(CommandSender sender, String[] args) {
+    public void performConsole(Player sender, String[] args) {
         if (args.length < minArgs || args.length > maxArgs) {
             performHelp(sender);
             return;
@@ -64,10 +64,10 @@ public abstract class CommandBase {
         processCommand(sender, args);
     }
 
-    public void performHelp(CommandSender sender) {
+    public void performHelp(Player sender) {
         sender.sendMessage("§c§l" + PLUGIN_NAME + " §7§l» §7" + this.syntax);
     }
 
-    protected abstract void processCommand(CommandSender commandSender, String[] args);
+    protected abstract void processCommand(Player commandSender, String[] args);
 
 }

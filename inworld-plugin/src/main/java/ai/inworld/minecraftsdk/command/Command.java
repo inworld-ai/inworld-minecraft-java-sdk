@@ -8,14 +8,14 @@ import java.util.List;
 public interface Command {
 
     void perform(Player player, String[] args);
-    void performConsole(CommandSender sender, String[] args);
-    void performHelp(CommandSender sender);
+    void performConsole(Player sender, String[] args);
+    void performHelp(Player sender);
     String getName();
     String getDescription();
     String getVersion();
     String getSyntax();
     String getPermission();
     boolean hasPermission(Player player);
-    List<String> getTabComplete(int index);
+    List<String> getTabComplete(String[] args, int index);
 
 }

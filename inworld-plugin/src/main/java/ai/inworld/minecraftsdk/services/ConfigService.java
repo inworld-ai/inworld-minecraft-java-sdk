@@ -3,13 +3,14 @@ package ai.inworld.minecraftsdk.services;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType.Error;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType.Info;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-
-import static ai.inworld.minecraftsdk.utils.Logger.LOG;
-import static ai.inworld.minecraftsdk.utils.Logger.LogType.Error;
-import static ai.inworld.minecraftsdk.utils.Logger.LogType.Info;
 
 public class ConfigService {
     
@@ -59,6 +60,7 @@ public class ConfigService {
         config.set("server.api.dev", "http://localhost:3000");
         config.set("server.api.prod", "");
         config.set("server.scenes", new HashMap<>());
+        config.set("server.characters", new HashMap<>());
         save();
     }
 

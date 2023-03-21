@@ -1,18 +1,16 @@
 package ai.inworld.minecraftsdk.net;
 
-import org.json.JSONObject;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
-import static ai.inworld.minecraftsdk.utils.Logger.LOG;
-import static ai.inworld.minecraftsdk.utils.Logger.LogType;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
+import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 
 public class HTTPRequest {
@@ -23,40 +21,88 @@ public class HTTPRequest {
     private static String errorPost = "Couldn't submit a POST request ";
     private static String errorReadResponse = "Couldn't read a response ";
 
-    public static String POST(String urlString, String inputString) {
-        return httpRequest(urlString, "POST", true, inputString);
+    public static String POST(String urlString, String inputString) throws ConnectException, IOException, RuntimeException { 
+        
+        try {
+        
+            return httpRequest(urlString, "POST", true, inputString);
+        
+        } catch (ConnectException e) {
+                
+            throw e;
+
+        } catch (IOException e) {
+            
+            throw e;
+
+        } catch(RuntimeException e) {
+        
+            throw e;
+        
+        }
     }
 
-    public static ArrayList<JSONObject> GET(String urlString) {
-        String jsonString = httpRequest(urlString, "GET", true, null);
-        return stringToJsonArray(jsonString);
+    public static String GET(String urlString) throws ConnectException, IOException, RuntimeException {
+        
+        try {
+        
+            return httpRequest(urlString, "GET", true, null);
+        
+        } catch (ConnectException e) {
+                
+            LOG(LogType.Error, e.getClass().toString());
+            throw e;
+
+        } catch (IOException e) {
+            
+            LOG(LogType.Error, e.getClass().toString());
+            throw e;
+
+        } catch(RuntimeException e) {
+        
+            throw e;
+        
+        }
+
     }
 
-    public static String httpRequest(String urlString, String requestMethod, boolean doOutput, String inputString) {
+    public static String httpRequest(String urlString, String requestMethod, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
 
         URL url = null;
 
         try {
+
             url = new URL(urlString);
+        
         } catch (MalformedURLException e) {
+        
             LOG(LogType.Error, errorMalformedURL);
             throw new RuntimeException(e);
+        
         }
 
         HttpURLConnection con = null;
 
         try {
-            con = (HttpURLConnection)url.openConnection();
+
+            con = (HttpURLConnection) url.openConnection();
+        
         } catch (IOException e) {
-            LOG(LogType.Error, errorIOException + urlString);
-            throw new RuntimeException(e);
+        
+            LOG(LogType.Error, errorIOException);
+            throw e;
+        
         }
 
         try {
+
             con.setRequestMethod(requestMethod);
+        
         } catch (ProtocolException e) {
+        
             LOG(LogType.Error, errorProtocolException);
             throw new RuntimeException(e);
+        
         }
 
         con.setRequestProperty("Content-Type", "application/json");
@@ -65,22 +111,31 @@ public class HTTPRequest {
 
         if (requestMethod.equals("POST")) {
 
-            try(OutputStream os = con.getOutputStream()) {
+            try {
+                
+                OutputStream os = con.getOutputStream();
 
                 byte[] input = inputString.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
 
+            } catch (ConnectException e) {
+                throw e;
             } catch (IOException e) {
-
-                LOG(LogType.Error, errorPost + urlString);
-                return null;
-
+                throw e;
+            } catch (RuntimeException e) {
+                throw e;
             }
 
         }
 
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-            
+        try {
+           
+            if (con.getResponseCode() > 299) {
+                throw new RuntimeException("Response Error: " + Integer.toString(con.getResponseCode()) + ": "  + con.getResponseMessage());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+
             StringBuilder response = new StringBuilder();
             String responseLine = null;
 
@@ -91,31 +146,14 @@ public class HTTPRequest {
             return response.toString();
 
         } catch (IOException e) {
-            LOG(LogType.Error, errorReadResponse + urlString);
+
+            LOG(LogType.Error, e.getClass() + " " + e.getMessage() + " " + errorReadResponse + urlString);
             throw new RuntimeException(e);
+
+        } catch (RuntimeException e) {
+            throw e;
         }
 
-    }
-
-    private static ArrayList<JSONObject> stringToJsonArray(String jsonString) {
-
-        if (jsonString == null) {
-            return null;
-        }
-
-        jsonString = jsonString.replace("[","").replace("]","");
-        ArrayList<String> jsonStrings = new ArrayList<>(List.of(jsonString.split("},")));
-        ArrayList<JSONObject> jsonObjects = new ArrayList<>();
-
-        for (String json : jsonStrings) {
-            if (json == null || json.length() == 0 || json.charAt(0) != '{') {
-                break;
-            }
-            jsonObjects.add(new JSONObject(json + "}"));
-        }
-
-        return jsonObjects;
-        
     }
 
 }
