@@ -32,6 +32,7 @@ public class CharacterCommand extends CommandBase implements Command {
         commandList.add("add");
         commandList.add("remove");
         commandList.add("list");
+        commandList.add("toggleAware");
         tabCompletes.put(2, commandList);
 
     }
@@ -72,7 +73,7 @@ public class CharacterCommand extends CommandBase implements Command {
         
             String command = args[1];
 
-            if (command.equals("remove")) {
+            if (command.equals("remove") || command.equals("toggleAware")) {
                 final List<String> characterList = new ArrayList<>();
                 for(String character : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
                     characterList.add(character);
@@ -120,9 +121,6 @@ public class CharacterCommand extends CommandBase implements Command {
                     return;
                 }
 
-                ConfigService.getConfig().set("server.characters." + id, null);
-
-                ConfigService.save();
                 CharacterService.removeEntity(id);
                 MessageService.sendPlayerMessage(sender, "Character removed: " + id);
 
@@ -161,17 +159,41 @@ public class CharacterCommand extends CommandBase implements Command {
                     return;
                 }
 
-                ConfigService.getConfig().set("server.characters." + id + ".location", sender.getLocation().serialize());
-                ConfigService.getConfig().set("server.characters." + id + ".uid", "0");
-                ConfigService.save();
-
-                CharacterService.addEntity(id);
+                CharacterService.addEntity(id, sender.getLocation());
                 MessageService.sendPlayerMessage(sender, "Character added: " + id);
 
                 return;
 
             }
         
+        }
+
+        if ( args.length == 3 ) {
+            
+            String command = args[1];
+            
+            if (command.equals("toggleAware")) {
+                
+                String id = args[2];
+
+                Object characterCheck = ConfigService.getConfig().get("server.characters." + id);
+                if (characterCheck == null) {
+                    MessageService.sendPlayerMessage(sender, "Character " + id + " doesn't exist in game");
+                    return;
+                }
+
+                try {
+                    Boolean awareState = CharacterService.toggleAware(id);
+                    MessageService.sendPlayerMessage(sender, "Character awareness is: " + awareState);
+                } catch (RuntimeException e) {
+                    LOG(LogType.Error, e.getMessage());
+                    MessageService.sendPlayerMessage(sender, "Error toggling awareness: " + e.getMessage());
+                }
+
+                return;
+            
+            }
+
         }
 
         performHelp(sender);

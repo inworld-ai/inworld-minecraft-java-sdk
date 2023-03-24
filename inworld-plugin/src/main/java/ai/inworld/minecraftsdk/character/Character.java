@@ -37,6 +37,10 @@ public class Character {
 
     }
 
+    public Boolean getAware() {
+        return ConfigService.getConfig().getBoolean("server.characters." + this.id + ".aware");
+    }
+
     public String getCharacterId() {
         return this.characterId;
     }
@@ -60,6 +64,15 @@ public class Character {
     public String getSceneName() {
         return this.sceneName;
     }
+    
+    public Villager getVillager() {
+        for (Villager entity: this.location.getWorld().getEntitiesByClass(Villager.class)) {
+            if (entity.getUniqueId().toString().equals(this.uid)) {
+                return entity;
+            }
+        }
+        throw new RuntimeException("toggleAware Error Entity not found in world");
+    }
 
     public String uid() {
         return this.uid;
@@ -82,6 +95,23 @@ public class Character {
         } catch( IllegalArgumentException e ) {
             LOG(LogType.Info, e.getMessage());
         }
+
+    }
+    
+    public Boolean toggleAware() throws RuntimeException {
+        
+        for (Villager entity: this.location.getWorld().getEntitiesByClass(Villager.class)) {
+            if (entity.getUniqueId().toString().equals(this.uid)) {
+                Boolean aware = !entity.isAware();
+                entity.setAI(aware);
+                entity.setAware(aware);
+                ConfigService.getConfig().set("server.characters." + this.id + ".aware", aware);
+                ConfigService.save();
+                return entity.isAware();
+            }
+        }
+
+        throw new RuntimeException("toggleAware Error Entity not found in world");
 
     }
 

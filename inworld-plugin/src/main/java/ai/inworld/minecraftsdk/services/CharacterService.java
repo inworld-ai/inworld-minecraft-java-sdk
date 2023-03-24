@@ -9,6 +9,7 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,24 +30,70 @@ public class CharacterService {
 
     }
 
-    public static void addEntity(String id) {
+    public static void addEntity(String characterId, Location location) {
 
-        Character character = new Character(id);
+        ConfigService.getConfig().set("server.characters." + characterId + ".location", location.serialize());
+        ConfigService.getConfig().set("server.characters." + characterId + ".uid", "0");
+        ConfigService.getConfig().set("server.characters." + characterId + ".aware", false);
+        ConfigService.save();
+
+        Character character = new Character(characterId);
         if ( character != null ) {
-            characters.put(id, character);
+            characters.put(characterId, character);
             character.spawn();
         }
 
     }
     
-    public static void removeEntity(String id) {
+    public static Character getCharacterById(String characterId) {
+        return characters.get(characterId);
+    }
+
+    public static String getIdByUid(String uid) throws RuntimeException {
+
+        // LOG(LogType.Info, "getIdByUid:" + uid);
+
+        for(String characterId : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
+            if(uid.equals(ConfigService.getConfig().getString("server.characters." + characterId + ".uid"))) {
+                return characterId;
+            }
+        }
+
+        throw new RuntimeException("Character UID not found");
+
+    }
+
+    public static void removeEntity(String characterId) {
         
-        Character character = characters.get(id);
+        // TODO Close all active sessions
+
+        
+        Character character = characters.get(characterId);
         if ( character != null ) {
             character.remove();
-            characters.remove(id);
+            characters.remove(characterId);
         }
    
+        ConfigService.getConfig().set("server.characters." + characterId, null);
+        ConfigService.save();
+        
     } 
+
+    public static Boolean toggleAware(String id) throws RuntimeException {
+        
+        try {
+
+            Character character = characters.get(id);
+            if ( character != null ) {
+                return character.toggleAware();
+            }
+
+            throw new RuntimeException("Error: CharacterService toggleAware character " + id + " not found in service");
+
+        } catch ( RuntimeException e) {
+            throw e;
+        }
+        
+    }
 
 }

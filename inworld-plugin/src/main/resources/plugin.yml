@@ -9,7 +9,19 @@ commands:
     description: Inworld command
     usage: /inworld <command>
     permission: inworld.command
+  chat:
+    description: Chat command
+    usage: /chat <message>
+    permission: chat.command
 permissions:
+  chat.*:
+    description: Gives access to all chat features
+    default: true
+    children:
+      chat.command: true
+  chat.command:
+    description: Allows usage of the command /chat
+    default: true
   inworld.*:
     description: Gives access to all Inworld features
     default: true

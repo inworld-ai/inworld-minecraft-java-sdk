@@ -12,6 +12,7 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.ArrayList;
 
 public final class APIService {
     
@@ -52,6 +53,57 @@ public final class APIService {
         try {
         
             GET(getAPIHost() + "/session/" + sessionId + "/close");
+        
+        } catch ( ConnectException e) {
+            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+        } catch ( IOException e) {
+            throw e;
+        } catch ( RuntimeException e) {
+            throw e;
+        }
+        
+    }
+
+    public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
+
+        try {
+            
+            String jsonString = GET(getAPIHost() + "/events");
+            if (jsonString == null) {
+                return null;
+            }
+
+            ArrayList<JSONObject> jsonObjects = (ArrayList<JSONObject>) JSONValue.parse(jsonString);
+            return jsonObjects;
+
+            // String message;
+
+            // for (JSONObject jsonObject : jsonObjects) {
+            //     if (jsonObject.get("type").equals("text")) {
+            //         message = "[" + characterName + "]: " + jsonObject.get("text").toString();
+            //         logConsole(Output, message);
+            //         commandSender.sendMessage(message);
+            //     }
+            // }
+        
+        } catch ( ConnectException e) {
+            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+        } catch ( IOException e) {
+            throw e;
+        } catch ( RuntimeException e) {
+            throw e;
+        }
+
+    }
+
+    public static void message(String sessionId, String message) throws ConnectException, IOException, RuntimeException {
+        
+        try {
+        
+            JSONObject data = new JSONObject();
+            data.put("message", message);
+            
+            POST(getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString());
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
