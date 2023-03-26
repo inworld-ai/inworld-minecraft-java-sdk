@@ -1,5 +1,7 @@
 server/*
 
+todo.txt
+
 inworld-plugin/target/
 inworld-plugin/pom.xml.tag
 inworld-plugin/pom.xml.releaseBackup
