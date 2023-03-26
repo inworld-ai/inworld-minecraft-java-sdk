@@ -64,6 +64,22 @@ public final class APIService {
         
     }
 
+    public static void closeAllByPlayerId(String playerId) throws ConnectException, IOException, RuntimeException {
+        
+        try {
+        
+            GET(getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
+        
+        } catch ( ConnectException e) {
+            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+        } catch ( IOException e) {
+            throw e;
+        } catch ( RuntimeException e) {
+            throw e;
+        }
+        
+    }
+
     public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
 
         try {

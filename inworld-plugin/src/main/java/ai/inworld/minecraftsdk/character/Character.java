@@ -24,7 +24,7 @@ public class Character {
         
         this.id = id;
 
-        LOG(LogType.Info, "id " + "server.characters." + this.id + ".location" );
+        // LOG(LogType.Info, "id " + "server.characters." + this.id + ".location" );
 
         String[] idParts = this.id.split("\\/");
         this.sceneName = idParts[0];

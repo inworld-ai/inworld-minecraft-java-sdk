@@ -1,3 +1,5 @@
+https://youtu.be/nI-Lj4xOwEE
+
 - Confirm removing characters from far away and from different worlds 
 - Villager Immortal as Command
 - Villager not taking damage as Command
@@ -10,5 +12,11 @@
 - Close sessions on removing character
 - What to do with Character messages when someone walks away?
 - Slight pause between starting a convo and getting the first message? How to handle the clear convo?
-- Characters can have babies?
+- Characters can have babies
 - Villagers vs NPC Players
+- Building Spigot server on demand
+- Handling session closure if Player disconnects before session created
+- Updating REST with some new commands that work better with minecraft
+    - Close all for server
+- Fix data replication between Character and Config
+- Fix id vs characterId in Session

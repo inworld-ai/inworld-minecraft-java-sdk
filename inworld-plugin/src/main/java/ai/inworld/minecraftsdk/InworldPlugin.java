@@ -1,8 +1,10 @@
 package ai.inworld.minecraftsdk;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ai.inworld.minecraftsdk.events.PlayerEvents;
+import ai.inworld.minecraftsdk.services.APIService;
 import ai.inworld.minecraftsdk.services.CharacterService;
 import ai.inworld.minecraftsdk.services.ChatService;
 import ai.inworld.minecraftsdk.services.CommandService;
@@ -13,6 +15,9 @@ import ai.inworld.minecraftsdk.services.SessionService;
 import static ai.inworld.minecraftsdk.Constants.CONFIG_FILENAME;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
+
+import java.io.IOException;
+import java.net.ConnectException;
 
 /*
  * inworld-sdk java plugin
@@ -49,6 +54,10 @@ public class InworldPlugin extends JavaPlugin
   {
     LOG(LogType.Info, "inworld-sdk disabled");
     ServerService.stop();
+    for( Player player: this.getServer().getOnlinePlayers()) {
+      SessionService.closeAllSessionByPlayer(player);
+    }
+
   }
 
 }

@@ -67,7 +67,6 @@ public class CharacterService {
         
         // TODO Close all active sessions
 
-        
         Character character = characters.get(characterId);
         if ( character != null ) {
             character.remove();

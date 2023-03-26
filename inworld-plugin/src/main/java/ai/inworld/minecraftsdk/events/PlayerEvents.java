@@ -41,6 +41,9 @@ public class PlayerEvents implements Listener {
             if (uid.equals(event.getRightClicked().getUniqueId().toString())) {
                 event.setCancelled(true);
                 Villager villager = (Villager) event.getRightClicked();
+                if (villager.isSleeping()) {
+                    villager.wakeup();
+                }
                 villager.setAI(false);
                 villager.setAware(false);
                 setFace(event.getPlayer(), villager);
@@ -89,12 +92,16 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        SessionService.clearPlayerSession(player);
+        SessionService.removePlayer(player);
+
         // TODO Close all players sessions
+        
         LOG(LogType.Info, "Player quit " + player.getPlayerListName());
-        // plugin.getInworldCharacters().closeAllConnection(player);
         List<Player> list = new ArrayList<>(Bukkit.getOnlinePlayers());
-        LOG(LogType.Info, "Player list " + list.size());
+        // LOG(LogType.Info, "Player list " + list.size());
+        // Stopping the thread if the last person leaves the server. 
+        // Note: The size of users will be 1 as the last person leaves because this is called before
+        // the event reaches the Minecraft server.
         if (list.size() <= 1) {
             ServerService.stop();
         }

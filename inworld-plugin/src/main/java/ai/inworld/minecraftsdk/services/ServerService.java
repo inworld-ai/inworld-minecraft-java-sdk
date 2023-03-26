@@ -29,36 +29,6 @@ public final class ServerService {
 
         ServerService.plugin = plugin;
 
-        eventThread = new BukkitRunnable() {
-            @Override
-            public void run() {
-
-                try {
-
-                    ArrayList<JSONObject> events = APIService.getEvents();
-                    for( JSONObject event: events) {
-                        if (event.get("type").toString().equals("text")) {
-                            String sessionId = event.get("sessionId").toString();
-                            String message = event.get("text").toString();
-                            Session session = SessionService.getSession(sessionId);
-                            session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + message);
-                        }
-                    }
-
-                    // Uncomment below to detail out the events recieved
-                    // LOG(LogType.Info, "ServerService events: " + events.toString());
-
-                } catch ( ConnectException e ) {
-                    LOG(LogType.Error, "ServerService ConnectException: " + e.getMessage());
-                } catch ( IOException e ) {
-                    LOG(LogType.Error, "ServerService IOException: " + e.getMessage());
-                } catch( RuntimeException e ) {
-                    LOG(LogType.Error, "ServerService RuntimeException: " + e.getMessage());
-                }
-
-            }
-        };
-
         if (ServerService.plugin.getServer().getOnlinePlayers().size() > 0) {
             start();
         }
@@ -66,34 +36,60 @@ public final class ServerService {
     }
 
     public static void start() {
-        // LOG(LogType.Info, "ServerService start events process");
-        try { 
-            if (eventThread.isCancelled()) {
-                eventThread.runTaskTimerAsynchronously(plugin, 20, 10);
-            }
-        } catch ( IllegalStateException e ) {
-            // Ignore error if the plugin is started or stopped without it having been run before.
-            if ( e.getMessage() == "Not scheduled yet") {
-                eventThread.runTaskTimer(plugin, 20, 5);
-                return;
-            }
-            throw e;
+        LOG(LogType.Info, "ServerService start events process");
+        
+        if (eventThread == null) {
+
+            eventThread = new BukkitRunnable() {
+                @Override
+                public void run() {
+    
+                    try {
+    
+                        ArrayList<JSONObject> events = APIService.getEvents();
+                        for( JSONObject event: events) {
+                            if (event.get("type").toString().equals("text")) {
+                                String sessionId = event.get("sessionId").toString();
+                                String message = event.get("text").toString();
+                                Session session = SessionService.getSession(sessionId);
+                                session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + message);
+                            }
+                        }
+    
+                        // Uncomment below to detail out the events recieved
+                        LOG(LogType.Info, "ServerService events: " + events.toString());
+    
+                    } catch ( ConnectException e ) {
+                        LOG(LogType.Error, "ServerService ConnectException: " + e.getMessage());
+                    } catch ( IOException e ) {
+                        LOG(LogType.Error, "ServerService IOException: " + e.getMessage());
+                    } catch( RuntimeException e ) {
+                        LOG(LogType.Error, "ServerService RuntimeException: " + e.getMessage());
+                    }
+    
+                }
+            };
+            eventThread.runTaskTimerAsynchronously(plugin, 20, 5);
+    
         }
+
     }
 
     public static void stop() {
         // LOG(LogType.Info, "ServerService stop events process");
-        try {
-            if (!eventThread.isCancelled()) {
-                eventThread.cancel();
-            }
-        } catch ( IllegalStateException e ) {
-            // Ignore error if the plugin is started or stopped without it having been run before.
-            if ( e.getMessage() != "Not scheduled yet") {
-                throw e;
-            }
+        if (eventThread != null) {
+            eventThread.cancel();
+            eventThread = null;
+        } 
+        // try {
             
-        }
+        // } catch ( IllegalStateException e ) {
+        //     // Ignore error if the plugin is started or stopped without it having been run before.
+        //     if ( e.getMessage() != "Not scheduled yet") {
+        //         throw e;
+        //     }
+            
+        // }
     }
 
 }
