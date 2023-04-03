@@ -1,7 +1,5 @@
 package ai.inworld.minecraftsdk.services;
 
-import ai.inworld.minecraftsdk.services.APIService;
-import ai.inworld.minecraftsdk.services.SessionService;
 import ai.inworld.minecraftsdk.session.Session;
 import ai.inworld.minecraftsdk.utils.NetUtils;
 
@@ -18,6 +16,11 @@ import org.json.simple.JSONObject;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
+/**
+ * This service class handles the threaded process that retrieves events from the Inworld
+ * If events are found then it messages the associated player.
+ * REST service
+ */
 public final class ServerService {
     
     public static final String SERVER_ID = UUID.randomUUID().toString();
@@ -25,19 +28,30 @@ public final class ServerService {
     public static BukkitRunnable eventThread;
     private static JavaPlugin plugin;
 
+    /**
+     * This method is called upon enabling of the plugin. It checks if there are an players
+     * already on the server and if so then starts the threaded process
+     * @param plugin A reference to the Minecraft plugin
+     */
     public ServerService(JavaPlugin plugin) {
 
         ServerService.plugin = plugin;
 
+        // If there are players on the server start the process
         if (ServerService.plugin.getServer().getOnlinePlayers().size() > 0) {
             start();
         }
 
     }
 
+    /**
+     * This method starts the threaded process
+     * @returns Nothing.
+     */
     public static void start() {
         LOG(LogType.Info, "ServerService start events process");
         
+        // If the thread is null then run
         if (eventThread == null) {
 
             eventThread = new BukkitRunnable() {
@@ -45,7 +59,8 @@ public final class ServerService {
                 public void run() {
     
                     try {
-    
+                        
+                        // Retrieve any events and if found then process and send them to their associated player
                         ArrayList<JSONObject> events = APIService.getEvents();
                         for( JSONObject event: events) {
                             if (event.get("type").toString().equals("text")) {
@@ -57,7 +72,7 @@ public final class ServerService {
                         }
     
                         // Uncomment below to detail out the events recieved
-                        LOG(LogType.Info, "ServerService events: " + events.toString());
+                        // LOG(LogType.Info, "ServerService events: " + events.toString());
     
                     } catch ( ConnectException e ) {
                         LOG(LogType.Error, "ServerService ConnectException: " + e.getMessage());
@@ -75,21 +90,16 @@ public final class ServerService {
 
     }
 
+    /**
+     * This method stops the threaded process
+     */
     public static void stop() {
         // LOG(LogType.Info, "ServerService stop events process");
+        // If the thread is not null then stop it
         if (eventThread != null) {
             eventThread.cancel();
             eventThread = null;
         } 
-        // try {
-            
-        // } catch ( IllegalStateException e ) {
-        //     // Ignore error if the plugin is started or stopped without it having been run before.
-        //     if ( e.getMessage() != "Not scheduled yet") {
-        //         throw e;
-        //     }
-            
-        // }
     }
 
 }

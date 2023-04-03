@@ -14,12 +14,27 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 
+/**
+ * This service class handles the Inworld REST API calls. If it's a POST call it builds the stringified JSON object
+ */
 public final class APIService {
     
+    /**
+     * This opens an Inworld session
+     * @param uid The Minecraft Player's UID
+     * @param sceneId The Inworld Scene Id for the character
+     * @param characterId The Inworld Character Id
+     * @param playerName The display name of the Minecraft Player
+     * @return JSONObject The response object containing the Inworld session Id and character information
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
     public static JSONObject open(String uid, String sceneId, String characterId, String playerName) throws ConnectException, IOException, RuntimeException {
        
         try {
 
+            // Create the JSON object
             JSONObject data = new JSONObject();
             data.put("uid", uid);
             data.put("sceneId", sceneId);
@@ -29,13 +44,14 @@ public final class APIService {
             
             // LOG(LogType.Info, data.toJSONString());
     
+            // Stringify the JSON object and send the request to the Inworld REST service
             String jsonString = POST(getAPIHost() + "/session/open", data.toJSONString());
             if (jsonString == null) {
                 return null;
             }
-    
+            
+            // Converts the returned data into a JSON object
             JSONObject result = (JSONObject) JSONValue.parse(jsonString);
-    
             return result;
 
         } catch ( ConnectException e) {
@@ -48,10 +64,18 @@ public final class APIService {
 
     }
 
+    /**
+     * This closes an Inworld session
+     * @param sessionId The session id to close
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
     public static void close(String sessionId) throws ConnectException, IOException, RuntimeException {
         
         try {
-        
+            
+            // Sends the close request to the Inworld REST service
             GET(getAPIHost() + "/session/" + sessionId + "/close");
         
         } catch ( ConnectException e) {
@@ -64,10 +88,18 @@ public final class APIService {
         
     }
 
+    /**
+     * This closes all open Inworld sessions by a Minecraft Player's UID
+     * @param playerId The Minecraft Player's UID
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
     public static void closeAllByPlayerId(String playerId) throws ConnectException, IOException, RuntimeException {
         
         try {
-        
+            
+            // Sends the close request to the Inworld REST service
             GET(getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
         
         } catch ( ConnectException e) {
@@ -80,28 +112,27 @@ public final class APIService {
         
     }
 
+    /**
+     * This retrieves any events on the Inworld REST service
+     * @return ArrayList<JSONObject> A list of events from the Inworld REST service
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
     public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
 
         try {
             
+            // Sends the request to the Inworld REST service to retrieve all events
             String jsonString = GET(getAPIHost() + "/events");
             if (jsonString == null) {
                 return null;
             }
 
+            // Processes the string response into an array of JSONObjects
             ArrayList<JSONObject> jsonObjects = (ArrayList<JSONObject>) JSONValue.parse(jsonString);
             return jsonObjects;
 
-            // String message;
-
-            // for (JSONObject jsonObject : jsonObjects) {
-            //     if (jsonObject.get("type").equals("text")) {
-            //         message = "[" + characterName + "]: " + jsonObject.get("text").toString();
-            //         logConsole(Output, message);
-            //         commandSender.sendMessage(message);
-            //     }
-            // }
-        
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
         } catch ( IOException e) {
@@ -112,13 +143,23 @@ public final class APIService {
 
     }
 
+    /**
+     * This sends a message to an active session
+     * @param sessionId The Inworld session id
+     * @param message The message to send
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
     public static void message(String sessionId, String message) throws ConnectException, IOException, RuntimeException {
         
         try {
-        
+            
+            // Create the JSON object
             JSONObject data = new JSONObject();
             data.put("message", message);
             
+            // Sends the message to the service
             POST(getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString());
         
         } catch ( ConnectException e) {
@@ -131,6 +172,11 @@ public final class APIService {
         
     }
 
+    /**
+     * Helper function to determine which host to send to depending on the Minecraft server 
+     * running on localhost vs a remote service
+     * @return String The host to use for the GET/POST requests
+     */
     private static String getAPIHost() {
 
         if (SERVER_IP.equals("localhost")) {

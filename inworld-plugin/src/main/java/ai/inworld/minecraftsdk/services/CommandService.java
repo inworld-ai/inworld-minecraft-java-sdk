@@ -25,7 +25,9 @@ import static ai.inworld.minecraftsdk.Constants.PLUGIN_NAME;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
-
+/**
+ * This service class loads and manages the admin commands
+ */
 public final class CommandService implements CommandExecutor, TabCompleter {
 
     private final String permission;
@@ -33,11 +35,16 @@ public final class CommandService implements CommandExecutor, TabCompleter {
 
     private final String noPermissionMessage = "You do not have permission to execute this command!";
 
+    /**
+     * This method is called upon enabling the plugin.
+     * @param plugin A reference to the Minecraft plugin
+     */
     public CommandService(JavaPlugin plugin) {
 
         plugin.getCommand("inworld").setExecutor(this);
         plugin.getCommand("inworld").setTabCompleter(this);
 
+        // Load the admin commands into this service
         this.permission = "inworld.command";
         this.commands = new ArrayList<>();
         this.commands.add(new APICommand());
@@ -48,6 +55,9 @@ public final class CommandService implements CommandExecutor, TabCompleter {
 
     }
 
+    /**
+     * This method handles processing the command. It confirms the player has permission and if it's a player or not.
+     */
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
 
@@ -80,6 +90,9 @@ public final class CommandService implements CommandExecutor, TabCompleter {
 
     }
 
+    /**
+     * This method handles processing the tab autocomplete for the command as the user enters it
+     */
     @Override
     public @Nullable List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         
@@ -115,10 +128,19 @@ public final class CommandService implements CommandExecutor, TabCompleter {
         return null;
     }
 
+    /**
+     * This method returns the permission level of the command service
+     * @return String the permission level
+     */
     public String getPermission() {
         return permission;
     }
 
+    /**
+     * This method returns the string UID of the Player sending the command
+     * @param commandSender
+     * @return String the UID of the Player
+     */
     public static String getUidHelper(CommandSender commandSender) {
 
         if (commandSender instanceof Player) {
@@ -128,6 +150,11 @@ public final class CommandService implements CommandExecutor, TabCompleter {
 
     }
 
+    /**
+     * This method sends a message to the Player that send the command
+     * @param sender The Player who sent the command
+     * @param message The message to send
+     */
     private void messageSender(CommandSender sender, String message) {
         // TODO Use Bukkit ChatColor instead of §
         MessageService.sendPlayerMessage(sender, "§c§l" + PLUGIN_NAME + " §7§l» §7" + message);

@@ -4,6 +4,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+/**
+ * The interface for all commands
+ */
 public interface Command {
 
     void perform(Player player, String[] args);

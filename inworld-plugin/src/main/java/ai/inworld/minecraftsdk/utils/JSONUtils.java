@@ -5,8 +5,18 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+
+/**
+ * This class is helper functions for processing JSON objects
+ */
 public class JSONUtils {
     
+    /**
+     * This method accepts a string representing an array of JSON objects and 
+     * parses it into JSON objects
+     * @param jsonString
+     * @return ArrayList<JSONObject> An array of JSON objects
+     */
     public static ArrayList<JSONObject> toJSON(String jsonString) {
 
         if (jsonString == null) {

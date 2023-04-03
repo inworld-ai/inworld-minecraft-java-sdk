@@ -5,7 +5,6 @@ import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
@@ -14,6 +13,13 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles the /inworld api command used in setting the dev and prod API hosts.
+ * Command List:
+ * - 'list' Lists the dev and prod hosts
+ * - 'set' Sets the host for the specific dev or prod
+ * - 'clear' Clears the host for the specific dev or prod
+ */
 public class APICommand extends CommandBase implements Command {
     
     public APICommand() {
@@ -39,6 +45,10 @@ public class APICommand extends CommandBase implements Command {
 
     }
 
+    /**
+     * @param sender The Player that is sending the command
+     * @param args The array of arguments sent
+     */
     @Override
     protected void processCommand(Player sender, String[] args) {
         
@@ -46,6 +56,7 @@ public class APICommand extends CommandBase implements Command {
 
         String command = args[1];
 
+        // Handles the 'list' command
         if ( args.length == minArgs && command.equals("list") ) {
             // String env = args[2];
             // String host = ConfigService.getConfig().getString("server.api." + env);
@@ -58,6 +69,7 @@ public class APICommand extends CommandBase implements Command {
             return;
         }
 
+        // Handles the 'clear' command
         if ( args.length == minArgs + 1 && command.equals("clear") ) {
             String env = args[2];
             ConfigService.getConfig().set("server.api." + env, "");
@@ -66,6 +78,7 @@ public class APICommand extends CommandBase implements Command {
             return;
         }
 
+        // Handles the 'set' commmand
         if ( args.length == maxArgs && command.equals("set")) {
             String env = args[2];
             if (env.equals("dev") || env.equals("prod") ) {

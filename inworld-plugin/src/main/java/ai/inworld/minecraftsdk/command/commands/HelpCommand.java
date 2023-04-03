@@ -4,16 +4,17 @@ import ai.inworld.minecraftsdk.command.Command;
 import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Handles the /inworld help command used detailing information on the other commands
+ */
 public class HelpCommand extends CommandBase implements Command {
 
     private final List<Command> commands;

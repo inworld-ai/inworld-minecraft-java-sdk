@@ -4,6 +4,11 @@ import java.util.Map;
 
 import org.bukkit.configuration.MemorySection;
 
+
+/**
+ * This class is helper functions for processing and storing the configuration data
+ * There is a bug in Bukkit with mapped data if it's loaded vs created. 
+ */
 public class ConfigUtils {
 
     /**

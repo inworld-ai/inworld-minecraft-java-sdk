@@ -18,6 +18,11 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+/**
+ * Handles the /chat command used talking to the character. 
+ * Currently not needed as direct chat is possible
+ * @deprecated
+ */
 public class ChatCommand extends CommandBase implements Command {
     
     public ChatCommand() {
@@ -36,8 +41,13 @@ public class ChatCommand extends CommandBase implements Command {
 
     }
 
+    /**
+     * @param sender The Player that is sending the command
+     * @param args The array of arguments sent
+     */
     @Override
     protected void processCommand(Player sender, String[] args) {
+
         LOG(LogType.Info, "Chat " + StringUtils.arrayToString(args));
         String message = StringUtils.arrayToString(args);
         try {
@@ -49,14 +59,22 @@ public class ChatCommand extends CommandBase implements Command {
         } catch( RuntimeException e ) {
             LOG(LogType.Error, "ServerService RuntimeException: " + e.getMessage());
         }
-        // SessionService.getPlayerSessionId(sender);
+
     }
 
+    /**
+     * @param sender The Player that is sending the command
+     * @param args The array of arguments sent
+     */
     @Override
     public void perform(Player player, String[] args) {
         processCommand(player, args);
     }
 
+    /**
+     * @param sender The Player that is sending the command
+     * @param args The array of arguments sent
+     */
     @Override
     public void performConsole(Player sender, String[] args) {
         processCommand(sender, args);

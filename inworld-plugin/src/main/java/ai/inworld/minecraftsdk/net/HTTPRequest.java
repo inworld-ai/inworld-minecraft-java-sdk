@@ -12,7 +12,9 @@ import java.nio.charset.StandardCharsets;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
-
+/**
+ * This class is sends the HTTP request to the REST service and processes the response
+ */
 public class HTTPRequest {
 
     private static String errorIOException = "TODO: Add better error message for IOException";
@@ -21,6 +23,15 @@ public class HTTPRequest {
     private static String errorPost = "Couldn't submit a POST request ";
     private static String errorReadResponse = "Couldn't read a response ";
 
+    /**
+     * This handles POST http requests
+     * @param urlString The REST url to send the request to 
+     * @param inputString The stringified JSON data to send
+     * @return String The stringified JSON response
+     * @throws ConnectException Thrown if there was a connection issue
+     * @throws IOException Thrown if there was an issue processing the data stream
+     * @throws RuntimeException Thrown for all other exceptions
+     */
     public static String POST(String urlString, String inputString) throws ConnectException, IOException, RuntimeException { 
         
         try {
@@ -42,6 +53,14 @@ public class HTTPRequest {
         }
     }
 
+    /**
+     * This handles GET http requests
+     * @param urlString The REST url to send the request to 
+     * @return String The stringified JSON response
+     * @throws ConnectException Thrown if there was a connection issue
+     * @throws IOException Thrown if there was an issue processing the data stream
+     * @throws RuntimeException Thrown for all other exceptions
+     */
     public static String GET(String urlString) throws ConnectException, IOException, RuntimeException {
         
         try {
@@ -66,6 +85,17 @@ public class HTTPRequest {
 
     }
 
+    /**
+     * 
+     * @param urlString The REST url to send the request to 
+     * @param requestMethod If the request was GET or POST
+     * @param doOutput If there is response data to recieve
+     * @param inputString The stringified JSON data to send
+     * @return String The stringified JSON response
+     * @throws ConnectException Thrown if there was a connection issue
+     * @throws IOException Thrown if there was an issue processing the data stream
+     * @throws RuntimeException Thrown for all other exceptions
+     */
     public static String httpRequest(String urlString, String requestMethod, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
 
         URL url = null;
@@ -105,10 +135,12 @@ public class HTTPRequest {
         
         }
 
+        // Sets the headers for the request and if there is a response
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");
         con.setDoOutput(doOutput);
 
+        // If the message is POST send the body data
         if (requestMethod.equals("POST")) {
 
             try {
@@ -130,12 +162,13 @@ public class HTTPRequest {
 
         try {
            
+            // Checks if there was an error code in response
             if (con.getResponseCode() > 299) {
                 throw new RuntimeException("Response Error: " + Integer.toString(con.getResponseCode()) + ": "  + con.getResponseMessage());
             }
 
+            // Process the response stream data into a single stringified JSON string
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
-
             StringBuilder response = new StringBuilder();
             String responseLine = null;
 

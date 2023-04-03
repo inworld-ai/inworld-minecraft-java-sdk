@@ -8,8 +8,6 @@ import ai.inworld.minecraftsdk.services.APIService;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
@@ -21,25 +19,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// workspaces/inworld_wonderland_roblox/scenes/the_caterpillars_mushroom
-        
-// ConfigService.getConfig().set("server.scenes." + sceneName + ".characters", sceneChars); //response.get("characters")
-
-// ArrayList<HashMap<String, HashMap<String, String>>> sec = (ArrayList<HashMap<String, HashMap<String, String>>>) ConfigService.getConfig().get("server.scenes." + name + ".characters");
-// MessageService.sendPlayerMessage(sender, " - Characters in scene " + name + ": ");
-
-// for(int i=0; i < sec.size(); i++) {
-//     HashMap<String, HashMap<String, String>> character = (HashMap<String, HashMap<String, String>>) sec.get(i);
-//     MessageService.sendPlayerMessage(sender, "ID: " + Integer.toString(i+1) + " Name: " + character.get("displayName"));
-// }
-
-// ArrayList<HashMap<String, String>> sec = (ArrayList<HashMap<String, String>>) ConfigService.getConfig().getList("server.scenes." + name + ".characters");
-
-// for(int i=0; i < sec.size(); i++) {
-//     HashMap<String, String> character = (HashMap<String, String>) sec.get(i);
-//     MessageService.sendPlayerMessage(sender, "ID: " + Integer.toString(i+1) + " Name: " + character.get("displayName"));
-// }
-            
+/**
+ * Handles the /inworld scene command used in adding, removing, listing scenes and 
+ * listing the characters in a scene. 
+ * Also handles toggling the awareness state of the character
+ * Command List:
+ * - 'add' Adds an Inworld scene to the plugin
+ * - 'remove' Removes and Inworld scene from the plugin
+ * - 'list' Lists the current Inworld scenes
+ * - 'characters' Lists a scenes characters
+ * - 'update' Not currently used
+ */     
 public class SceneCommand extends CommandBase implements Command {
     
     public SceneCommand() {
@@ -62,9 +52,16 @@ public class SceneCommand extends CommandBase implements Command {
 
     }
 
+    /**
+     * Generates the tab autocomplete of the command while the Player is typing it
+     * @param args The array of arguments sent
+     * @param index The current index of the command 
+     */
     @Override
     public List<String> getTabComplete(String[] args, int index) {
 
+        // Generates for the 'remove', 'characters' and 'update' commands
+        // Note: 'add' does not have an autocomplete generated
         if ( args.length == 2 ) {
         
             String command = args[1];
@@ -86,9 +83,14 @@ public class SceneCommand extends CommandBase implements Command {
 
     }
 
+    /**
+     * @param sender The Player that is sending the command
+     * @param args The array of arguments sent
+     */
     @Override
     protected void processCommand(Player sender, String[] args) {
         
+        // Handles the 'list' command
         if ( args.length == 2 ) {
 
             String command = args[1];
@@ -106,6 +108,7 @@ public class SceneCommand extends CommandBase implements Command {
 
         }
 
+        // Handles the 'remove' command
         if ( args.length == 3 ) {
             
             String command = args[1];
@@ -123,6 +126,7 @@ public class SceneCommand extends CommandBase implements Command {
 
         }
 
+        // Handles the 'characters' command
         if ( args.length == 3 ) {
 
             String command = args[1];
@@ -145,6 +149,7 @@ public class SceneCommand extends CommandBase implements Command {
         
         }
 
+        // Handles the 'add' command
         if ( args.length == 3 ) {
 
             String command = args[1];
@@ -153,19 +158,21 @@ public class SceneCommand extends CommandBase implements Command {
             if (command.equals("add")) {
                 
                 try {
-
+                    
+                    // Splitting the Inworld scene id apart to get the scene name
                     String[] sceneParts = sceneId.split("\\/");
                     String sceneName = sceneParts[sceneParts.length-1];
 
+                    // Check if the scene has already been added
                     Object sceneCheck = ConfigService.getConfig().get("server.scenes." + sceneName);
-
                     if (sceneCheck != null) {
                         MessageService.sendPlayerMessage(sender, "Scene \"" + sceneName  + "\" already exists");
                         return;
                     }
 
+                    // Open a temporary session to retrieve the scene information and confirm
+                    // it exists in your Inworld account
                     JSONObject response = APIService.open("0", sceneId, "", "");
-
                     if (!response.containsKey("character")) {
                         throw new RuntimeException("Error SceneId not found: " + sceneId);
                     }
@@ -176,10 +183,11 @@ public class SceneCommand extends CommandBase implements Command {
 
                     String sessionId = response.get("sessionId").toString();
                     
+                    // Store the scene in the configuration
                     ConfigService.getConfig().set("server.scenes." + sceneName + ".id", sceneId);
 
+                    // Store the scene's characters
                     ArrayList<HashMap<String, String>> sceneChars = (ArrayList<HashMap<String, String>>) response.get("characters");
-
                     for(int i=0; i < sceneChars.size(); i++) {
                         HashMap<String, String> sceneChar = sceneChars.get(i);
                         String displayName = sceneChar.get("displayName");
@@ -190,10 +198,9 @@ public class SceneCommand extends CommandBase implements Command {
 
                     ConfigService.save();
 
+                    // Output the list of characters to the player
                     MessageService.sendPlayerMessage(sender, "Scene added: " + sceneName);
-
                     MessageService.sendPlayerMessage(sender, " - Characters in scene " + sceneName + ": ");
-
                     for(String character : ConfigService.getConfig().getConfigurationSection("server.scenes." + sceneName + ".characters").getKeys(false)) {
                         MessageService.sendPlayerMessage(sender, " - " + character);
                     }

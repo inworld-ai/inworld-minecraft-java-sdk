@@ -8,6 +8,10 @@ import org.bukkit.event.Listener;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
+/**
+ * This event handler is used to monitor events by the Villager entities
+ * Not used
+ */
 public class EntityEvents implements Listener {
     
     @EventHandler
