@@ -19,11 +19,17 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
  */
 public class Session {
         
+    // The internal character id
     private final String characterId;
+    // The display name of the character/villager
     private final String displayName;
+    // The Inworld character id
     private final String id;
+    // The Player associated with the session
     private final Player player;
+    // The Inworld scene id
     private final String sceneId;
+    // The session id
     private String sessionId;
 
     /**
