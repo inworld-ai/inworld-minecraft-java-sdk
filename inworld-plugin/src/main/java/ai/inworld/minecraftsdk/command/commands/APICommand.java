@@ -4,6 +4,7 @@ import ai.inworld.minecraftsdk.command.Command;
 import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
+import ai.inworld.minecraftsdk.services.ServerService;
 
 import org.bukkit.entity.Player;
 
@@ -75,6 +76,7 @@ public class APICommand extends CommandBase implements Command {
             ConfigService.getConfig().set("server.api." + env, "");
             ConfigService.save();
             MessageService.sendPlayerMessage(sender, "API Host " + env + " has been cleared");
+            ServerService.restart();
             return;
         }
 
@@ -86,6 +88,7 @@ public class APICommand extends CommandBase implements Command {
                 ConfigService.getConfig().set("server.api." + env, host);
                 ConfigService.save();
                 MessageService.sendPlayerMessage(sender, "API Host " + env + " has been set to " + host);
+                ServerService.restart();
                 return;
             }
             MessageService.sendPlayerMessage(sender, "ERROR API Enironment " + env + " is not valid. Must be \'dev\' or \'prod\'");

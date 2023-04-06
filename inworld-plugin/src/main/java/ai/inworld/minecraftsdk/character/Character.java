@@ -25,7 +25,7 @@ public class Character {
     // The Minecraft UID of the Villager entity
     private String uid;
     // The Inworld Id of the character
-    private final String id;
+    private final String inworldId;
     // The spawn location of the Villager in Minecraft
     private Location location;
     // The Inworld scene id of the character
@@ -37,20 +37,20 @@ public class Character {
      * @param id The Inworld Id
      * @throws RuntimeException
      */
-    public Character(String id) throws RuntimeException {
+    public Character(String inworldId) throws RuntimeException {
         
-        this.id = id;
+        this.inworldId = inworldId;
 
         // LOG(LogType.Info, "id " + "server.characters." + this.id + ".location" );
 
-        String[] idParts = this.id.split("\\/");
+        String[] idParts = this.inworldId.split("\\/");
         this.sceneName = idParts[0];
         this.characterName = idParts[1];
         this.sceneId = ConfigService.getConfig().getString("server.scenes." + this.sceneName + ".id");
         this.characterId = ConfigService.getConfig().getString("server.scenes." + this.sceneName + ".characters." + this.characterName + ".resourceName");
         this.displayName = ConfigService.getConfig().getString("server.scenes." + this.sceneName + ".characters." + this.characterName + ".displayName");
-        this.uid = ConfigService.getConfig().getString("server.characters." + this.id + ".uid");
-        this.location = Location.deserialize(ConfigUtils.castToMap(ConfigService.getConfig().get("server.characters." + this.id + ".location")));
+        this.uid = ConfigService.getConfig().getString("server.characters." + this.inworldId + ".uid");
+        this.location = Location.deserialize(ConfigUtils.castToMap(ConfigService.getConfig().get("server.characters." + this.inworldId + ".location")));
 
     }
 
@@ -58,7 +58,7 @@ public class Character {
      * @return Boolean If the character is set to aware or not
      */
     public Boolean getAware() {
-        return ConfigService.getConfig().getBoolean("server.characters." + this.id + ".aware");
+        return ConfigService.getConfig().getBoolean("server.characters." + this.inworldId + ".aware");
     }
 
     /**
@@ -85,8 +85,8 @@ public class Character {
     /**
      * @return String the Inworld character id
      */
-    public String getId() {
-        return this.id;
+    public String geInworldId() {
+        return this.inworldId;
     }
 
     /**
@@ -142,7 +142,7 @@ public class Character {
 
             // Gets the UID of the newly created entity and stores it in the config
             this.uid = entity.getUniqueId().toString();
-            ConfigService.getConfig().set("server.characters." + this.id + ".uid", this.uid);
+            ConfigService.getConfig().set("server.characters." + this.inworldId + ".uid", this.uid);
             ConfigService.save();
         
         } catch( IllegalArgumentException e ) {
@@ -163,7 +163,7 @@ public class Character {
                 Boolean aware = !entity.isAware();
                 entity.setAI(aware);
                 entity.setAware(aware);
-                ConfigService.getConfig().set("server.characters." + this.id + ".aware", aware);
+                ConfigService.getConfig().set("server.characters." + this.inworldId + ".aware", aware);
                 ConfigService.save();
                 return entity.isAware();
             }

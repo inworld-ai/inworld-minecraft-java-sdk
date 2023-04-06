@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
@@ -51,6 +52,20 @@ public final class ServerService {
     public static void start() {
         LOG(LogType.Info, "ServerService start events process");
         
+        try {
+            APIService.getAPIHost();
+        } catch (RuntimeException e) {
+            for (Player player: ServerService.plugin.getServer().getOnlinePlayers()) {
+                player.sendMessage(ChatColor.RED + "Error: " + ChatColor.GRAY + "» " + ChatColor.WHITE + "Inworld REST Host Not Configured");
+            }
+            return;
+        }
+
+        // if (.equals("")) {
+            
+        //     return;
+        // }
+
         // If the thread is null then run
         if (eventThread == null) {
 
@@ -100,6 +115,14 @@ public final class ServerService {
             eventThread.cancel();
             eventThread = null;
         } 
+    }
+
+    /**
+     * This method restarts the threaded process
+     */
+    public static void restart() { 
+        stop();
+        start();
     }
 
 }

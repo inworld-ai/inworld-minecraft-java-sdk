@@ -1,1 +1,1 @@
-java -jar spigot-1.19.3.jar nogui
+java -jar spigot-1.19.4.jar nogui

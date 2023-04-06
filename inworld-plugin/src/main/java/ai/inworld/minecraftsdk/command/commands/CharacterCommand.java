@@ -57,7 +57,7 @@ public class CharacterCommand extends CommandBase implements Command {
         
             String command = args[1];
 
-            if (command.equals("add")) {
+            if (command.equals("add") && ConfigService.getConfig().getConfigurationSection("server.scenes") != null) {
                 final List<String> sceneList = new ArrayList<>();
                 for(String scene : ConfigService.getConfig().getConfigurationSection("server.scenes").getKeys(false)) {
                     sceneList.add(scene);
@@ -73,7 +73,8 @@ public class CharacterCommand extends CommandBase implements Command {
             String command = args[1];
             String sceneId = args[2];
 
-            if (command.equals("add") && !sceneId.equals("")) {
+            if (command.equals("add") && !sceneId.equals("") 
+                && ConfigService.getConfig().getConfigurationSection("server.scenes." + sceneId + ".characters") != null) {
                 final List<String> characterList = new ArrayList<>();
                 for(String character : ConfigService.getConfig().getConfigurationSection("server.scenes." + sceneId + ".characters").getKeys(false)) {
                     characterList.add(character);
@@ -88,7 +89,8 @@ public class CharacterCommand extends CommandBase implements Command {
         
             String command = args[1];
 
-            if (command.equals("remove") || command.equals("toggleAware")) {
+            if ((command.equals("remove") || command.equals("toggleAware")) &&
+                ConfigService.getConfig().getConfigurationSection("server.characters") != null) {
                 final List<String> characterList = new ArrayList<>();
                 for(String character : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
                     characterList.add(character);
@@ -96,6 +98,12 @@ public class CharacterCommand extends CommandBase implements Command {
                 tabCompletes.put(3, characterList);
             }
             
+            // If the command is list then clear out the previous autocompletes
+            if (command.equals("list")) {
+                tabCompletes.put(3, new ArrayList<>());
+                tabCompletes.put(4, new ArrayList<>());
+            }
+
         }
 
         return super.getTabComplete(args, index);
@@ -116,11 +124,15 @@ public class CharacterCommand extends CommandBase implements Command {
             
             if (command.equals("list")) {
 
+                if ( ConfigService.getConfig().getConfigurationSection("server.characters") == null ) {
+                    MessageService.sendPlayerMessage(sender, "- " + "There are no characters in the game");
+                    return;
+                }
+
                 MessageService.sendPlayerMessage(sender, "Characters in game:");
                 for(String character : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
                     MessageService.sendPlayerMessage(sender, "- " + character);
                 }
-
                 return;
 
             }
@@ -152,7 +164,7 @@ public class CharacterCommand extends CommandBase implements Command {
         }
 
         // Handles the 'add' command
-        if ( args.length >= 3 ) {
+        if ( args.length == 4 ) {
 
             String command = args[1];
             

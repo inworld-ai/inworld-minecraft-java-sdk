@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,7 +50,7 @@ public class SessionService {
      * @param characterId The internal character id
      * @param player The Player opening the session
      */
-    public static void addSession(String characterId, Player player) {
+    public static void addSession(String characterId, Player player) throws RuntimeException {
 
         String sessionKey = player.getUniqueId().toString() + "/" + characterId;
         
@@ -79,10 +80,13 @@ public class SessionService {
                                         
                     } catch ( ConnectException e ) {
                         LOG(LogType.Error, "SessionService ConnectException: " + e.getMessage());
+                        player.sendMessage(ChatColor.RED + "Error" + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + "There was an error starting the chat");
                     } catch ( IOException e ) {
                         LOG(LogType.Error, "SessionService IOException: " + e.getMessage());
+                        player.sendMessage(ChatColor.RED + "Error" + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + "There was an error starting the chat");
                     } catch( RuntimeException e ) {
                         LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
+                        player.sendMessage(ChatColor.RED + "Error" + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + "There was an error starting the chat");
                     }
                     
                 }

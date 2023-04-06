@@ -39,19 +39,18 @@ Note: this documentation references specific version numbers for both Minecraft 
 ## <a id="setup" name="setup"></a>Setup
 
 ### <a id="setup-java" name="setup-java"></a>Install OpenJDK 19+
-+ [OpenJDK](https://jdk.java.net/19/)
-+ [Installing OpenJDK on MacOSXs](https://www.codejava.net/java-se/install-openjdk-18-on-macos) 
-+ [Installing OpenJDK on Windows](https://stackoverflow.com/questions/52511778/how-to-install-openjdk-11-on-windows)
+Note: The following installation tutorials reference a previous version of OpenJDK. When following the instructions please ignore the version they list and use 19+.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: The installation tutorials reference a previous version of OpenJDK. When following the instructions please ignore the version they list and use 19+.
++ [OpenJDK](https://jdk.java.net/19/)
++ [Installing OpenJDK on MacOSX](https://www.codejava.net/java-se/install-openjdk-18-on-macos) 
++ [Installing OpenJDK on Windows](https://stackoverflow.com/questions/52511778/how-to-install-openjdk-11-on-windows)
 <br/><br/>
 
 ### <a id="setup-maven" name="setup-maven"></a>Install Maven 3.9.0+
+Note: The following installation tutorials reference a previous version of Maven. When following the instructions please ignore the version they list and use 3.9.0+.
 + [Apache Maven](https://maven.apache.org/)
 + [Installing Maven on MacOSX](https://www.digitalocean.com/community/tutorials/install-maven-mac-os)
 + [Installing Maven on Windows](https://phoenixnap.com/kb/install-maven-windows)
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: The installation tutorials reference a previous version of Maven. When following the instructions please ignore the version they list and use 3.9.0+.
 <br/><br/>
 
 ### <a id="setup-vscode" name="setup-vscode"></a>Install VSCode
@@ -100,11 +99,11 @@ In VSCode in the Explorer pane, expand the MAVEN section then expand inworld-sdk
 
 ## <a id="running" name="running"></a>Running
 
-Open your terminal program and navigate to the ```server/``` folder. Type in the following command to start the server ```java -jar spigot-1.19.4.jar nogui``` to start the server.
+Open your terminal program and navigate to the ```server/``` folder you installed the Spigot server into. Type in the following command to start the server ```java -jar spigot-1.19.4.jar nogui``` to start the server.
 
-To simplify the starting of the server you may wish to create a script file ```start.bat``` for Windows or ```start.sh``` for Mac and Linux. Create the file in the ```server/``` folder and paste the ```java -jar spigot-1.19.4.jar nogui``` command into it. Save and close the file. For Mac and Linux you need to set the file as executable by running ```
+To simplify the starting of the server you may wish to create a script file ```start.bat``` for Windows or ```start.sh``` for Mac and Linux. Create the file in the ```server/``` folder and paste the ```java -jar spigot-1.19.4.jar nogui``` command into it. Save and close the file. For Mac and Linux you will need to set the file as executable by running this command in your terminal window: ```chmod +x start.sh```.
 
-If you modify the plugin you can [build](#building) it while the server is running. In the terminal window running the Spigot server type in the command ```reload``` and this will reload the plugin. Note: Doing this clears any open sessions.
+If you modify the plugin you can [build](#building) it while the server is running. In the terminal window running the Spigot server type in the command ```reload``` hit enter and this will reload the plugin. Note: Doing this closes any open sessions.
 <br/><br/>
 ***
 <br/> 

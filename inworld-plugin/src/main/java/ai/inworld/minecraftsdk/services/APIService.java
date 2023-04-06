@@ -45,7 +45,7 @@ public final class APIService {
             // LOG(LogType.Info, data.toJSONString());
     
             // Stringify the JSON object and send the request to the Inworld REST service
-            String jsonString = POST(getAPIHost() + "/session/open", data.toJSONString());
+            String jsonString = POST(APIService.getAPIHost() + "/session/open", data.toJSONString());
             if (jsonString == null) {
                 return null;
             }
@@ -76,7 +76,7 @@ public final class APIService {
         try {
             
             // Sends the close request to the Inworld REST service
-            GET(getAPIHost() + "/session/" + sessionId + "/close");
+            GET(APIService.getAPIHost() + "/session/" + sessionId + "/close");
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
@@ -100,14 +100,15 @@ public final class APIService {
         try {
             
             // Sends the close request to the Inworld REST service
-            GET(getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
+            GET(APIService.getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
         } catch ( IOException e) {
-            throw e;
+            // throw e;
         } catch ( RuntimeException e) {
-            throw e;
+            LOG(LogType.Error, "APIServer closeAllByPlayerId " + e.getMessage());
+            // throw e;
         }
         
     }
@@ -124,7 +125,7 @@ public final class APIService {
         try {
             
             // Sends the request to the Inworld REST service to retrieve all events
-            String jsonString = GET(getAPIHost() + "/events");
+            String jsonString = GET(APIService.getAPIHost() + "/events");
             if (jsonString == null) {
                 return null;
             }
@@ -134,10 +135,11 @@ public final class APIService {
             return jsonObjects;
 
         } catch ( ConnectException e) {
-            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+            throw new ConnectException("Unable to connect to Inworld REST API Host");
         } catch ( IOException e) {
             throw e;
         } catch ( RuntimeException e) {
+            LOG(LogType.Error, "APIServer getEvents " + e.getMessage());
             throw e;
         }
 
@@ -160,7 +162,7 @@ public final class APIService {
             data.put("message", message);
             
             // Sends the message to the service
-            POST(getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString());
+            POST(APIService.getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString());
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
@@ -177,13 +179,21 @@ public final class APIService {
      * running on localhost vs a remote service
      * @return String The host to use for the GET/POST requests
      */
-    private static String getAPIHost() {
+    public static String getAPIHost() throws RuntimeException {
+
+        String host = "";
 
         if (SERVER_IP.equals("localhost")) {
-            return ConfigService.getConfig().getString("server.api.dev");
+            host = ConfigService.getConfig().getString("server.api.dev");
         } else {
-            return ConfigService.getConfig().getString("server.api.prod");
+            host = ConfigService.getConfig().getString("server.api.prod");
         }
+
+        if (host.equals("")) {
+            throw new RuntimeException("Host is not defined");
+        }
+
+        return host;
 
     }
 

@@ -67,9 +67,10 @@ public class SceneCommand extends CommandBase implements Command {
             String command = args[1];
             final List<String> sceneList = new ArrayList<>();
 
-            if (command.equals("remove")
+            if ((command.equals("remove")
             || command.equals("characters")
-            || command.equals("update")) {
+            || command.equals("update")) 
+                && ConfigService.getConfig().getConfigurationSection("server.scenes") != null) {
                 for(String scene : ConfigService.getConfig().getConfigurationSection("server.scenes").getKeys(false)) {
                     sceneList.add(scene);
                 }
@@ -96,6 +97,11 @@ public class SceneCommand extends CommandBase implements Command {
             String command = args[1];
             
             if (command.equals("list")) {
+
+                if ( ConfigService.getConfig().getConfigurationSection("server.scenes") == null ) {
+                    MessageService.sendPlayerMessage(sender, "- " + "There are no scenes in the game");
+                    return;
+                }
 
                 MessageService.sendPlayerMessage(sender, "Scenes in system:");
                 for(String scene : ConfigService.getConfig().getConfigurationSection("server.scenes").getKeys(false)) {
@@ -200,7 +206,7 @@ public class SceneCommand extends CommandBase implements Command {
 
                     // Output the list of characters to the player
                     MessageService.sendPlayerMessage(sender, "Scene added: " + sceneName);
-                    MessageService.sendPlayerMessage(sender, " - Characters in scene " + sceneName + ": ");
+                    MessageService.sendPlayerMessage(sender, "Characters in scene: ");
                     for(String character : ConfigService.getConfig().getConfigurationSection("server.scenes." + sceneName + ".characters").getKeys(false)) {
                         MessageService.sendPlayerMessage(sender, " - " + character);
                     }

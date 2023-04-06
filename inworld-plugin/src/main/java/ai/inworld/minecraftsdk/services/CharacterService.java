@@ -31,6 +31,10 @@ public class CharacterService {
 
         this.plugin.getServer().getPluginManager().registerEvents(new EntityEvents(), this.plugin);
 
+        if (ConfigService.getConfig().getConfigurationSection("server.characters") == null) {
+            return;
+        }
+
         for(String characterId : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
             characters.put(characterId, new Character(characterId));
         }

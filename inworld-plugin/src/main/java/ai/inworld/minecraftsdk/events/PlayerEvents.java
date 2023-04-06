@@ -45,6 +45,7 @@ public class PlayerEvents implements Listener {
             if (uid.equals(event.getRightClicked().getUniqueId().toString())) {
                 // Prevent the right click from opening a trade window
                 event.setCancelled(true);
+                Player player = event.getPlayer();
                 // Wake the Villager up if it was sleeping
                 Villager villager = (Villager) event.getRightClicked();
                 if (villager.isSleeping()) {
@@ -58,7 +59,11 @@ public class PlayerEvents implements Listener {
                 LOG(LogType.Info, event.getPlayer().getName() + " right clicked " + villager.getCustomName());
                 // Get the Villager's Inworld CharacterID and open a session
                 String id = CharacterService.getIdByUid(villager.getUniqueId().toString());
-                SessionService.addSession(id, event.getPlayer());
+                try {
+                    SessionService.addSession(id, player);
+                } catch (RuntimeException e) {
+                    player.sendMessage(ChatColor.RED + "Error" + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + e.getMessage());
+                }
                 break;
             }
         }
