@@ -42,7 +42,7 @@ public final class APIService {
             data.put("playerName", playerName);
             data.put("serverId", SERVER_ID);
             
-            // LOG(LogType.Info, data.toJSONString());
+            LOG(LogType.Info, data.toJSONString());
     
             // Stringify the JSON object and send the request to the Inworld REST service
             String jsonString = POST(APIService.getAPIHost() + "/session/open", data.toJSONString());

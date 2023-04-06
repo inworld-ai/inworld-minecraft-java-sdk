@@ -49,7 +49,7 @@ public final class CommandService implements CommandExecutor, TabCompleter {
         this.commands = new ArrayList<>();
         this.commands.add(new APICommand());
         this.commands.add(new CharacterCommand());
-        this.commands.add(new RegisterCommand());
+        // this.commands.add(new RegisterCommand());
         this.commands.add(new SceneCommand());
         this.commands.add(new HelpCommand(this.commands));
 
