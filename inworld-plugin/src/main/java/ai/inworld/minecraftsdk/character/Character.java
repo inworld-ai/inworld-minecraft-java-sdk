@@ -52,6 +52,8 @@ public class Character {
         this.uid = ConfigService.getConfig().getString("server.characters." + this.inworldId + ".uid");
         this.location = Location.deserialize(ConfigUtils.castToMap(ConfigService.getConfig().get("server.characters." + this.inworldId + ".location")));
 
+        LOG(LogType.Info, "Character displayName " + this.displayName);
+
     }
 
     /**

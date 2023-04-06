@@ -95,7 +95,7 @@ public class ConfigService {
     /**
      * This method processing the configuration file into the plugin
      */
-    private static void process() {
+    public static void process() {
         config = YamlConfiguration.loadConfiguration(configFile);
     }
 

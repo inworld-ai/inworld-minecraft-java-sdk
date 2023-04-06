@@ -7,6 +7,7 @@ import ai.inworld.minecraftsdk.command.CommandBase;
 import ai.inworld.minecraftsdk.services.APIService;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.MessageService;
+import ai.inworld.minecraftsdk.utils.ConfigUtils;
 
 import org.bukkit.entity.Player;
 
@@ -203,6 +204,7 @@ public class SceneCommand extends CommandBase implements Command {
                     }
 
                     ConfigService.save();
+                    ConfigService.process();
 
                     // Output the list of characters to the player
                     MessageService.sendPlayerMessage(sender, "Scene added: " + sceneName);

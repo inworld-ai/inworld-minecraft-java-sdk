@@ -48,6 +48,8 @@ public class CharacterService {
      */
     public static void addEntity(String characterId, Location location) {
 
+        LOG(LogType.Info, characterId);
+
         // Add the data to the configuration
         ConfigService.getConfig().set("server.characters." + characterId + ".location", location.serialize());
         ConfigService.getConfig().set("server.characters." + characterId + ".uid", "0");
