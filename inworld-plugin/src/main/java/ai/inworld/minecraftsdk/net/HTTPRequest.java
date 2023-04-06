@@ -40,10 +40,12 @@ public class HTTPRequest {
         
         } catch (ConnectException e) {
                 
+            LOG(LogType.Error, e.getClass().toString());
             throw e;
 
         } catch (IOException e) {
             
+            LOG(LogType.Error, e.getClass().toString());
             throw e;
 
         } catch(RuntimeException e) {
