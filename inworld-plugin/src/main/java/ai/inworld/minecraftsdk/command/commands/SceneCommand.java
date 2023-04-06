@@ -47,7 +47,7 @@ public class SceneCommand extends CommandBase implements Command {
         commandList.add("remove");
         commandList.add("list");
         commandList.add("characters");
-        commandList.add("update");
+        // commandList.add("update"); Not currently used
         tabCompletes.put(2, commandList);
 
     }

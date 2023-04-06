@@ -7,7 +7,7 @@
 
 	<groupId>ai.inworld</groupId>
 	<artifactId>inworld-sdk</artifactId>
-	<version>0.0.1</version>
+	<version>1.19.4</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
