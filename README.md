@@ -129,21 +129,21 @@ This plugin uses a custom set of Minecraft commands to manage scenes, characters
 
 Note: With the API host configuration there are two options, `dev` and `prod`. The `dev` host is used when no IP address have been entered into the Spigot configuration file ```server.properties``` located in the ```server/``` folder at the root of this project. Within the file if the ```server-ip=``` property has been set this plugin will use the `prod` API host. If it left blank it will use the `dev` API host. If you are using a server rental service the IP may be set automatically.
 
-Below are a list of the commands you can issue using the internal Minecraft Java chat window:
+Below are a list of the commands you can issue using the internal Minecraft Java chat window:<br/><br/>
 
-### <a id="commands-api" name="commands-api"></a>API - These commands allow you to set, remove and list the hosts to your Inworld REST API Proxy servers. 
-`set`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api set [dev|prod] [host]``` - This command sets the API host for either dev or prod to the Inworld API REST service.
-`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api list``` - This command lists the API hosts for both `dev` and `prod`.<br/>
-`clear`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api clear [dev|prod]``` - This command will remove the API host set for either `dev` or `prod`.<br/>
+### <a id="commands-api" name="commands-api"></a>API - These commands allow you to set, remove and list the hosts to your Inworld REST API Proxy servers. <br/>
+`set`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api set [dev|prod] [host]``` - This command sets the API host for either dev or prod to the Inworld API REST service. <br/><br/>
+`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api list``` - This command lists the API hosts for both `dev` and `prod`.<br/><br/>
+`clear`&nbsp;&nbsp;&nbsp;Syntax ```/inworld api clear [dev|prod]``` - This command will remove the API host set for either `dev` or `prod`.<br/><br/>
 
-### <a id="commands-scene" name="commands-scene"></a>Scene - These commands allow you to set, remove and list the hosts to your Inworld REST API Proxy servers. 
-`add`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene add [sceneId]``` - This command adds an Inworld scene to the Minecraft server. `[sceneId]`.<br/>
-`characters`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene characters [sceneId]``` - This command lists the Inworld characters within a `[sceneId]`.<br/>
-`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene list``` - This command lists all the Inworld scenes that have been added to the Minecraft server.<br/>
-`remove`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene remove [sceneId]``` - This command will remove an Inworld scene from the Minecraft server.<br/>
+### <a id="commands-scene" name="commands-scene"></a>Scene - These commands allow you to set, remove and list the hosts to your Inworld REST API Proxy servers. <br/>
+`add`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene add [sceneId]``` - This command adds an Inworld scene to the Minecraft server. `[sceneId]`.<br/><br/>
+`characters`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene characters [sceneId]``` - This command lists the Inworld characters within a `[sceneId]`.<br/><br/>
+`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene list``` - This command lists all the Inworld scenes that have been added to the Minecraft server.<br/><br/>
+`remove`&nbsp;&nbsp;&nbsp;Syntax ```/inworld scene remove [sceneId]``` - This command will remove an Inworld scene from the Minecraft server.<br/><br/>
 
-### <a id="commands-character" name="commands-character"></a>Character - These commands allow you to set, remove and list the characters to the Minecraft game that will add them as Villagers. It also allows you to toggle a character from being stationary vs have Minecraft Villager AI enabled.
-`add`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character add [character]``` - This command adds an Inworld scene to the Minecraft server. The `[character]` id will be tab autocompleted.<br/>
-`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character list``` - This command lists all the Inworld character that have been added to the Minecraft server.<br/>
-`remove`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character remove [character]``` - This command will remove an Inworld character from the Minecraft server.<br/>
+### <a id="commands-character" name="commands-character"></a>Character - These commands allow you to set, remove and list the characters to the Minecraft game that will add them as Villagers. It also allows you to toggle a character from being stationary vs have Minecraft Villager AI enabled.<br/>
+`add`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character add [character]``` - This command adds an Inworld scene to the Minecraft server. The `[character]` id will be tab autocompleted.<br/><br/>
+`list`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character list``` - This command lists all the Inworld character that have been added to the Minecraft server.<br/><br/>
+`remove`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character remove [character]``` - This command will remove an Inworld character from the Minecraft server.<br/><br/>
 `toggleAware`&nbsp;&nbsp;&nbsp;Syntax ```/inworld character toggleAware [character]``` - This command will toggle the AI awareness of the character allowing it to be stationary or act like a regular Minecraft Villager.<br/>
