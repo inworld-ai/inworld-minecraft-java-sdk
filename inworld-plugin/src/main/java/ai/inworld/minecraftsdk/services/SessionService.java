@@ -142,17 +142,17 @@ public class SessionService {
      * This method closes all the sessions open by the Player
      * @param player The player to close the sessions for
      */
-    public static void closeAllSessionByPlayer(Player player) {
-        try {
-            APIService.closeAllByPlayerId(player.getUniqueId().toString());
-        } catch ( ConnectException e ) {
-            LOG(LogType.Error, "SessionService ConnectException: " + e.getMessage());
-        } catch ( IOException e ) {
-            LOG(LogType.Error, "SessionService IOException: " + e.getMessage());
-        } catch( RuntimeException e ) {
-            LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
-        }
-    }
+    // public static void closeAllSessionByPlayer(Player player) {
+    //     try {
+    //         APIService.closeAllByPlayerId(player.getUniqueId().toString());
+    //     } catch ( ConnectException e ) {
+    //         LOG(LogType.Error, "SessionService ConnectException: " + e.getMessage());
+    //     } catch ( IOException e ) {
+    //         LOG(LogType.Error, "SessionService IOException: " + e.getMessage());
+    //     } catch( RuntimeException e ) {
+    //         LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
+    //     }
+    // }
 
     /**
      * This method returns a session by session id
@@ -212,12 +212,12 @@ public class SessionService {
 
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                closeAllSessionByPlayer(player);
-            }
-        }.runTaskAsynchronously(plugin);
+        // new BukkitRunnable() {
+        //     @Override
+        //     public void run() {
+        //         closeAllSessionByPlayer(player);
+        //     }
+        // }.runTaskAsynchronously(plugin);
 
     }
     
@@ -236,7 +236,7 @@ public class SessionService {
                 return;
             }
 
-            session.close();
+            // session.close();
 
             String sessionKey = session.getPlayerId().toString() + "/" + session.getId();
 
@@ -244,10 +244,6 @@ public class SessionService {
             sessions.remove(sessionId);
 
 
-        } catch ( ConnectException e ) {
-            LOG(LogType.Error, "SessionService ConnectException: " + e.getMessage());
-        } catch ( IOException e ) {
-            LOG(LogType.Error, "SessionService IOException: " + e.getMessage());
         } catch( RuntimeException e ) {
             LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
         }

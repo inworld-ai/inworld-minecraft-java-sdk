@@ -66,12 +66,12 @@ public class InworldPlugin extends JavaPlugin
     LOG(LogType.Info, "inworld-sdk disabled");
     
     // Stops running the thread that calls the REST service for events
-    ServerService.stop();
+    // ServerService.stop();
 
     // Closes all open Inworld sessions for every player online
-    for( Player player: this.getServer().getOnlinePlayers()) {
-      SessionService.closeAllSessionByPlayer(player);
-    }
+    // for( Player player: this.getServer().getOnlinePlayers()) {
+    //   SessionService.closeAllSessionByPlayer(player);
+    // }
 
   }
 

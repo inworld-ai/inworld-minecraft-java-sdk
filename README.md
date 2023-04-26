@@ -64,7 +64,7 @@ Note: The following installation tutorials reference a previous version of Maven
 <br/><br/>
 
 #### Install the Following VSCode Extension(s)
-+ [Extension Pack for Java]()
++ [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
 <br/><br/>
 
 ### <a id="setup-minecraft" name="setup-minecraft"></a>Install Maincraft Java Edition

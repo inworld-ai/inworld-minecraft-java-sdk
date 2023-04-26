@@ -157,34 +157,34 @@ public class Session {
         return this.sessionId;
     }
 
-    /**
-     * This method closes the session
-     * @throws ConnectException Throw if there's an error closes the connection
-     * @throws IOException Throw if there's an error in data structure
-     * @throws RuntimeException Thrown if there's any other errors
-     */
-    public void close() throws ConnectException, IOException, RuntimeException {
+    // /**
+    //  * This method closes the session
+    //  * @throws ConnectException Throw if there's an error closes the connection
+    //  * @throws IOException Throw if there's an error in data structure
+    //  * @throws RuntimeException Thrown if there's any other errors
+    //  */
+    // public void close() throws ConnectException, IOException, RuntimeException {
 
-        try {
+    //     try {
 
-            if (this.sessionId == null ) {
-                throw new RuntimeException("Error session not open");
-            }
+    //         if (this.sessionId == null ) {
+    //             throw new RuntimeException("Error session not open");
+    //         }
 
-            // Close the session
-            APIService.close(this.sessionId);
+    //         // Close the session
+    //         APIService.close(this.sessionId);
 
-        } catch ( ConnectException e ) {
-            throw e;
-        } catch ( IOException e ) {
-            throw e;
-        } catch( RuntimeException e ) {
-            throw e;
-        }
+    //     } catch ( ConnectException e ) {
+    //         throw e;
+    //     } catch ( IOException e ) {
+    //         throw e;
+    //     } catch( RuntimeException e ) {
+    //         throw e;
+    //     }
 
-        return;
+    //     return;
 
-    }
+    // }
 
     /**
      * This method opens the session

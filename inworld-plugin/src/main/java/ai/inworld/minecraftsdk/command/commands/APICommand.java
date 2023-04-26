@@ -26,10 +26,10 @@ public class APICommand extends CommandBase implements Command {
     public APICommand() {
         
         this.permission = "inworld.command.api";
-        this.description = "Get or Set the Inworld REST API URLs";
+        this.description = "Get or Set the Inworld REST API Keys";
         this.name = "api";
         this.version = "1.0";
-        this.syntax = "/inworld api [environment] [host]";
+        this.syntax = "/inworld api [item] [host]";
         this.minArgs = 2;
         this.maxArgs = 4;
 
@@ -39,10 +39,10 @@ public class APICommand extends CommandBase implements Command {
         commandList.add("list");
         tabCompletes.put(2, commandList);
 
-        final List<String> environmentList = new ArrayList<>();
-        environmentList.add("dev");
-        environmentList.add("prod");
-        tabCompletes.put(3, environmentList);
+        final List<String> itemList = new ArrayList<>();
+        itemList.add("key");
+        itemList.add("secret");
+        tabCompletes.put(3, itemList);
 
     }
 
@@ -59,39 +59,36 @@ public class APICommand extends CommandBase implements Command {
 
         // Handles the 'list' command
         if ( args.length == minArgs && command.equals("list") ) {
-            // String env = args[2];
-            // String host = ConfigService.getConfig().getString("server.api." + env);
-            // MessageService.sendPlayerMessage(sender, host);
             MessageService.sendPlayerMessage(sender, "API Host List:");
-            for(String env : ConfigService.getConfig().getConfigurationSection("server.api").getKeys(false)) {
-                String host = ConfigService.getConfig().getString("server.api." + env);
-                MessageService.sendPlayerMessage(sender, "- " + env + ": " + host);
+            for(String item : ConfigService.getConfig().getConfigurationSection("server.api").getKeys(false)) {
+                String host = ConfigService.getConfig().getString("server.api." + item);
+                MessageService.sendPlayerMessage(sender, "- " + item + ": " + host);
             }
             return;
         }
 
         // Handles the 'clear' command
         if ( args.length == minArgs + 1 && command.equals("clear") ) {
-            String env = args[2];
-            ConfigService.getConfig().set("server.api." + env, "");
+            String item = args[2];
+            ConfigService.getConfig().set("server.api." + item, "");
             ConfigService.save();
-            MessageService.sendPlayerMessage(sender, "API Host " + env + " has been cleared");
-            ServerService.restart();
+            MessageService.sendPlayerMessage(sender, "API Host " + item + " has been cleared");
+            // ServerService.restart();
             return;
         }
 
         // Handles the 'set' commmand
         if ( args.length == maxArgs && command.equals("set")) {
-            String env = args[2];
-            if (env.equals("dev") || env.equals("prod") ) {
-                String host = args[3];
-                ConfigService.getConfig().set("server.api." + env, host);
+            String item = args[2];
+            if (item.equals("key") || item.equals("secret") ) {
+                String value = args[3];
+                ConfigService.getConfig().set("server.api." + item, value);
                 ConfigService.save();
-                MessageService.sendPlayerMessage(sender, "API Host " + env + " has been set to " + host);
-                ServerService.restart();
+                MessageService.sendPlayerMessage(sender, "API " + item + " has been set to " + value);
+                // ServerService.restart();
                 return;
             }
-            MessageService.sendPlayerMessage(sender, "ERROR API Enironment " + env + " is not valid. Must be \'dev\' or \'prod\'");
+            MessageService.sendPlayerMessage(sender, "ERROR API item: " + item + " is not valid. Must be \'key\' or \'secret\'");
             return;
         }
 

@@ -38,91 +38,91 @@ public final class ServerService {
 
         ServerService.plugin = plugin;
 
-        // If there are players on the server start the process
-        if (ServerService.plugin.getServer().getOnlinePlayers().size() > 0) {
-            start();
-        }
-
-    }
-
-    /**
-     * This method starts the threaded process
-     * @returns Nothing.
-     */
-    public static void start() {
-        LOG(LogType.Info, "ServerService start events process");
-        
-        try {
-            APIService.getAPIHost();
-        } catch (RuntimeException e) {
-            for (Player player: ServerService.plugin.getServer().getOnlinePlayers()) {
-                player.sendMessage(ChatColor.RED + "Error: " + ChatColor.GRAY + "» " + ChatColor.WHITE + "Inworld REST Host Not Configured");
-            }
-            return;
-        }
-
-        // if (.equals("")) {
-            
-        //     return;
+        // // If there are players on the server start the process
+        // if (ServerService.plugin.getServer().getOnlinePlayers().size() > 0) {
+        //     start();
         // }
 
-        // If the thread is null then run
-        if (eventThread == null) {
+    }
 
-            eventThread = new BukkitRunnable() {
-                @Override
-                public void run() {
+    // /**
+    //  * This method starts the threaded process
+    //  * @returns Nothing.
+    //  */
+    // public static void start() {
+    //     LOG(LogType.Info, "ServerService start events process");
+        
+    //     try {
+    //         APIService.getAPIHost();
+    //     } catch (RuntimeException e) {
+    //         for (Player player: ServerService.plugin.getServer().getOnlinePlayers()) {
+    //             player.sendMessage(ChatColor.RED + "Error: " + ChatColor.GRAY + "» " + ChatColor.WHITE + "Inworld REST Host Not Configured");
+    //         }
+    //         return;
+    //     }
+
+    //     // if (.equals("")) {
+            
+    //     //     return;
+    //     // }
+
+    //     // If the thread is null then run
+    //     if (eventThread == null) {
+
+    //         eventThread = new BukkitRunnable() {
+    //             @Override
+    //             public void run() {
     
-                    try {
+    //                 try {
                         
-                        // Retrieve any events and if found then process and send them to their associated player
-                        ArrayList<JSONObject> events = APIService.getEvents();
-                        for( JSONObject event: events) {
-                            if (event.get("type").toString().equals("text")) {
-                                String sessionId = event.get("sessionId").toString();
-                                String message = event.get("text").toString();
-                                Session session = SessionService.getSession(sessionId);
-                                session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + message);
-                            }
-                        }
+    //                     // Retrieve any events and if found then process and send them to their associated player
+    //                     ArrayList<JSONObject> events = APIService.getEvents();
+    //                     for( JSONObject event: events) {
+    //                         if (event.get("type").toString().equals("text")) {
+    //                             String sessionId = event.get("sessionId").toString();
+    //                             String message = event.get("text").toString();
+    //                             Session session = SessionService.getSession(sessionId);
+    //                             session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + message);
+    //                         }
+    //                     }
     
-                        // Uncomment below to detail out the events recieved
-                        // LOG(LogType.Info, "ServerService events: " + events.toString());
+    //                     // Uncomment below to detail out the events recieved
+    //                     // LOG(LogType.Info, "ServerService events: " + events.toString());
     
-                    } catch ( ConnectException e ) {
-                        LOG(LogType.Error, "ServerService ConnectException: " + e.getMessage());
-                    } catch ( IOException e ) {
-                        LOG(LogType.Error, "ServerService IOException: " + e.getMessage());
-                    } catch( RuntimeException e ) {
-                        LOG(LogType.Error, "ServerService RuntimeException: " + e.getMessage());
-                    }
+    //                 } catch ( ConnectException e ) {
+    //                     LOG(LogType.Error, "ServerService ConnectException: " + e.getMessage());
+    //                 } catch ( IOException e ) {
+    //                     LOG(LogType.Error, "ServerService IOException: " + e.getMessage());
+    //                 } catch( RuntimeException e ) {
+    //                     LOG(LogType.Error, "ServerService RuntimeException: " + e.getMessage());
+    //                 }
     
-                }
-            };
-            eventThread.runTaskTimerAsynchronously(plugin, 20, 5);
+    //             }
+    //         };
+    //         eventThread.runTaskTimerAsynchronously(plugin, 20, 5);
     
-        }
+    //     }
 
-    }
+    // }
 
-    /**
-     * This method stops the threaded process
-     */
-    public static void stop() {
-        // LOG(LogType.Info, "ServerService stop events process");
-        // If the thread is not null then stop it
-        if (eventThread != null) {
-            eventThread.cancel();
-            eventThread = null;
-        } 
-    }
+    // /**
+    //  * This method stops the threaded process
+    //  */
+    // public static void stop() {
+    //     // LOG(LogType.Info, "ServerService stop events process");
+    //     // If the thread is not null then stop it
+    //     if (eventThread != null) {
+    //         eventThread.cancel();
+    //         eventThread = null;
+    //     } 
+    // }
 
-    /**
-     * This method restarts the threaded process
-     */
-    public static void restart() { 
-        stop();
-        start();
-    }
+    // /**
+    //  * This method restarts the threaded process
+    //  */
+    // public static void restart() { 
+    //     stop();
+    //     start();
+    // }
 
 }

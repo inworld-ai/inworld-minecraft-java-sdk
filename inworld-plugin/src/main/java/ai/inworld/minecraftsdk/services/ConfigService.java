@@ -85,8 +85,8 @@ public class ConfigService {
      */
     private static void init() {
         process();
-        config.set("server.api.dev", "http://localhost:3000");
-        config.set("server.api.prod", "");
+        config.set("server.api.key", "");
+        config.set("server.api.secret", "");
         config.set("server.scenes", new HashMap<>());
         config.set("server.characters", new HashMap<>());
         save();

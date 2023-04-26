@@ -8,6 +8,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+
+import org.json.simple.JSONObject;
 
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
@@ -32,11 +35,11 @@ public class HTTPRequest {
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String POST(String urlString, String inputString) throws ConnectException, IOException, RuntimeException { 
+    public static String POST(String urlString, String inputString, JSONObject headers) throws ConnectException, IOException, RuntimeException { 
         
         try {
         
-            return httpRequest(urlString, "POST", true, inputString);
+            return httpRequest(urlString, "POST", headers, true, inputString);
         
         } catch (ConnectException e) {
                 
@@ -63,11 +66,11 @@ public class HTTPRequest {
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String GET(String urlString) throws ConnectException, IOException, RuntimeException {
+    public static String GET(String urlString, JSONObject headers) throws ConnectException, IOException, RuntimeException {
         
         try {
         
-            return httpRequest(urlString, "GET", true, null);
+            return httpRequest(urlString, "GET", headers, true, null);
         
         } catch (ConnectException e) {
                 
@@ -98,7 +101,7 @@ public class HTTPRequest {
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String httpRequest(String urlString, String requestMethod, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
+    public static String httpRequest(String urlString, String requestMethod, JSONObject headers, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
 
         URL url = null;
 
@@ -136,6 +139,15 @@ public class HTTPRequest {
             throw new RuntimeException(e);
         
         }
+
+        for(String key : headers.keySet()) {
+
+        }
+
+        headers.keySet().forEach(keyStr -> {
+            Object value = headers.get(keyStr.toString());
+            con.setRequestProperty(keyStr.toString(), value.toString());
+        });
 
         // Sets the headers for the request and if there is a response
         con.setRequestProperty("Content-Type", "application/json");

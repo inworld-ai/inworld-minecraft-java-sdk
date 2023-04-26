@@ -13,6 +13,7 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * This service class handles the Inworld REST API calls. If it's a POST call it builds the stringified JSON object
@@ -42,10 +43,14 @@ public final class APIService {
             data.put("playerName", playerName);
             data.put("serverId", SERVER_ID);
             
+            JSONObject headers = new JSONObject();
+            headers.put("authorization", getAuthHeader());
+            headers.put("Grpc-Metadata-session-id", "inworld_wonderland_roblox:00000000-00000000-00000000-00000000");
+
             // LOG(LogType.Info, data.toJSONString());
     
             // Stringify the JSON object and send the request to the Inworld REST service
-            String jsonString = POST(APIService.getAPIHost() + "/session/open", data.toJSONString());
+            String jsonString = POST(APIService.getAPIHost() + "/session/open", data.toJSONString(), headers);
             if (jsonString == null) {
                 return null;
             }
@@ -64,86 +69,86 @@ public final class APIService {
 
     }
 
-    /**
-     * This closes an Inworld session
-     * @param sessionId The session id to close
-     * @throws ConnectException Thrown if there was a connection error
-     * @throws IOException Thrown if there was an error in the data
-     * @throws RuntimeException Thrown for all other errors
-     */
-    public static void close(String sessionId) throws ConnectException, IOException, RuntimeException {
+    // /**
+    //  * This closes an Inworld session
+    //  * @param sessionId The session id to close
+    //  * @throws ConnectException Thrown if there was a connection error
+    //  * @throws IOException Thrown if there was an error in the data
+    //  * @throws RuntimeException Thrown for all other errors
+    //  */
+    // public static void close(String sessionId) throws ConnectException, IOException, RuntimeException {
         
-        try {
+    //     try {
             
-            // Sends the close request to the Inworld REST service
-            GET(APIService.getAPIHost() + "/session/" + sessionId + "/close");
+    //         // Sends the close request to the Inworld REST service
+    //         GET(APIService.getAPIHost() + "/session/" + sessionId + "/close");
         
-        } catch ( ConnectException e) {
-            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
-        } catch ( IOException e) {
-            throw e;
-        } catch ( RuntimeException e) {
-            throw e;
-        }
+    //     } catch ( ConnectException e) {
+    //         throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+    //     } catch ( IOException e) {
+    //         throw e;
+    //     } catch ( RuntimeException e) {
+    //         throw e;
+    //     }
         
-    }
+    // }
 
-    /**
-     * This closes all open Inworld sessions by a Minecraft Player's UID
-     * @param playerId The Minecraft Player's UID
-     * @throws ConnectException Thrown if there was a connection error
-     * @throws IOException Thrown if there was an error in the data
-     * @throws RuntimeException Thrown for all other errors
-     */
-    public static void closeAllByPlayerId(String playerId) throws ConnectException, IOException, RuntimeException {
+    // /**
+    //  * This closes all open Inworld sessions by a Minecraft Player's UID
+    //  * @param playerId The Minecraft Player's UID
+    //  * @throws ConnectException Thrown if there was a connection error
+    //  * @throws IOException Thrown if there was an error in the data
+    //  * @throws RuntimeException Thrown for all other errors
+    //  */
+    // public static void closeAllByPlayerId(String playerId) throws ConnectException, IOException, RuntimeException {
         
-        try {
+    //     try {
             
-            // Sends the close request to the Inworld REST service
-            GET(APIService.getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
+    //         // Sends the close request to the Inworld REST service
+    //         GET(APIService.getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
         
-        } catch ( ConnectException e) {
-            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
-        } catch ( IOException e) {
-            // throw e;
-        } catch ( RuntimeException e) {
-            LOG(LogType.Error, "APIServer closeAllByPlayerId " + e.getMessage());
-            // throw e;
-        }
+    //     } catch ( ConnectException e) {
+    //         throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+    //     } catch ( IOException e) {
+    //         // throw e;
+    //     } catch ( RuntimeException e) {
+    //         LOG(LogType.Error, "APIServer closeAllByPlayerId " + e.getMessage());
+    //         // throw e;
+    //     }
         
-    }
+    // }
 
-    /**
-     * This retrieves any events on the Inworld REST service
-     * @return ArrayList<JSONObject> A list of events from the Inworld REST service
-     * @throws ConnectException Thrown if there was a connection error
-     * @throws IOException Thrown if there was an error in the data
-     * @throws RuntimeException Thrown for all other errors
-     */
-    public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
+    // /**
+    //  * This retrieves any events on the Inworld REST service
+    //  * @return ArrayList<JSONObject> A list of events from the Inworld REST service
+    //  * @throws ConnectException Thrown if there was a connection error
+    //  * @throws IOException Thrown if there was an error in the data
+    //  * @throws RuntimeException Thrown for all other errors
+    //  */
+    // public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
 
-        try {
+    //     try {
             
-            // Sends the request to the Inworld REST service to retrieve all events
-            String jsonString = GET(APIService.getAPIHost() + "/events");
-            if (jsonString == null) {
-                return null;
-            }
+    //         // Sends the request to the Inworld REST service to retrieve all events
+    //         String jsonString = GET(APIService.getAPIHost() + "/events");
+    //         if (jsonString == null) {
+    //             return null;
+    //         }
 
-            // Processes the string response into an array of JSONObjects
-            ArrayList<JSONObject> jsonObjects = (ArrayList<JSONObject>) JSONValue.parse(jsonString);
-            return jsonObjects;
+    //         // Processes the string response into an array of JSONObjects
+    //         ArrayList<JSONObject> jsonObjects = (ArrayList<JSONObject>) JSONValue.parse(jsonString);
+    //         return jsonObjects;
 
-        } catch ( ConnectException e) {
-            throw new ConnectException("Unable to connect to Inworld REST API Host");
-        } catch ( IOException e) {
-            throw e;
-        } catch ( RuntimeException e) {
-            LOG(LogType.Error, "APIServer getEvents " + e.getMessage());
-            throw e;
-        }
+    //     } catch ( ConnectException e) {
+    //         throw new ConnectException("Unable to connect to Inworld REST API Host");
+    //     } catch ( IOException e) {
+    //         throw e;
+    //     } catch ( RuntimeException e) {
+    //         LOG(LogType.Error, "APIServer getEvents " + e.getMessage());
+    //         throw e;
+    //     }
 
-    }
+    // }
 
     /**
      * This sends a message to an active session
@@ -161,8 +166,12 @@ public final class APIService {
             JSONObject data = new JSONObject();
             data.put("message", message);
             
+            JSONObject headers = new JSONObject();
+            headers.put("authorization", getAuthHeader());
+            headers.put("Grpc-Metadata-session-id", "");
+
             // Sends the message to the service
-            POST(APIService.getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString());
+            POST(APIService.getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString(), headers);
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
@@ -175,26 +184,24 @@ public final class APIService {
     }
 
     /**
+     * Generates the Base64 Authentication Header
+     * @return String The Base64 authentication header
+     * @throws RuntimeException
+     */
+    public static String getAuthHeader() {
+        String apiKey = ConfigService.getConfig().getString("server.api.key");
+        String apiSecret = ConfigService.getConfig().getString("server.api.secret");
+        return "Basic " + Base64.getEncoder().encodeToString((apiKey + ":" + apiSecret).getBytes());
+    }
+
+    /**
      * Helper function to determine which host to send to depending on the Minecraft server 
      * running on localhost vs a remote service
      * @return String The host to use for the GET/POST requests
      */
     public static String getAPIHost() throws RuntimeException {
-
-        String host = "";
-
-        if (SERVER_IP.equals("localhost")) {
-            host = ConfigService.getConfig().getString("server.api.dev");
-        } else {
-            host = ConfigService.getConfig().getString("server.api.prod");
-        }
-
-        if (host.equals("")) {
-            throw new RuntimeException("Host is not defined");
-        }
-
+        String host = "https://studio.inworld.ai/v1/";
         return host;
-
     }
 
 }

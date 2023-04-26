@@ -213,7 +213,7 @@ public class SceneCommand extends CommandBase implements Command {
                         MessageService.sendPlayerMessage(sender, " - " + character);
                     }
 
-                    APIService.close(sessionId);
+                    // APIService.close(sessionId);
 
                     LOG(LogType.Info, "Scene " + sceneName + " added ");
 

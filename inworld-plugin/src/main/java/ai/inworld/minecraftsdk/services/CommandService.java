@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import ai.inworld.minecraftsdk.command.commands.APICommand;
 import ai.inworld.minecraftsdk.command.commands.CharacterCommand;
 import ai.inworld.minecraftsdk.command.commands.HelpCommand;
-import ai.inworld.minecraftsdk.command.commands.RegisterCommand;
 import ai.inworld.minecraftsdk.command.commands.SceneCommand;
 
 import javax.annotation.Nonnull;

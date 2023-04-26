@@ -79,7 +79,7 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         LOG(LogType.Info, "Player joined " + player.getPlayerListName());
-        ServerService.start();
+        // ServerService.start();
     }
 
     /**
@@ -134,7 +134,7 @@ public class PlayerEvents implements Listener {
         // Note: The size of users will be 1 as the last person leaves because this is called before
         // the event reaches the Minecraft server.
         if (list.size() <= 1) {
-            ServerService.stop();
+            // ServerService.stop();
         }
     }
 
