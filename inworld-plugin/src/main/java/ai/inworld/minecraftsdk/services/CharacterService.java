@@ -82,17 +82,13 @@ public class CharacterService {
      * @throws RuntimeException Thrown if the Villager entity UID is not found
      */
     public static String getIdByUid(String uid) throws RuntimeException {
-
         // LOG(LogType.Info, "getIdByUid:" + uid);
-
         for(String characterId : ConfigService.getConfig().getConfigurationSection("server.characters").getKeys(false)) {
             if(uid.equals(ConfigService.getConfig().getString("server.characters." + characterId + ".uid"))) {
                 return characterId;
             }
         }
-
         throw new RuntimeException("Character UID not found");
-
     }
 
     /**

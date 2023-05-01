@@ -169,7 +169,7 @@ public class SceneCommand extends CommandBase implements Command {
                     // Splitting the Inworld scene id apart to get the scene name
                     String[] sceneParts = sceneId.split("\\/");
                     String sceneName = sceneParts[sceneParts.length-1];
-
+                    
                     // Check if the scene has already been added
                     Object sceneCheck = ConfigService.getConfig().get("server.scenes." + sceneName);
                     if (sceneCheck != null) {
@@ -179,22 +179,21 @@ public class SceneCommand extends CommandBase implements Command {
 
                     // Open a temporary session to retrieve the scene information and confirm
                     // it exists in your Inworld account
-                    JSONObject response = APIService.open("0", sceneId, "", "");
-                    if (!response.containsKey("character")) {
-                        throw new RuntimeException("Error SceneId not found: " + sceneId);
-                    }
+                    JSONObject response = APIService.open(sceneId);
                     
-                    if (!response.containsKey("sessionId")) {
+                    if (!response.containsKey("name")) {
                         throw new RuntimeException("Error unable to add scene");
                     }
 
-                    String sessionId = response.get("sessionId").toString();
-                    
+                    if (!response.containsKey("sessionCharacters")) {
+                        throw new RuntimeException("Error scene not found: " + sceneId);
+                    }
+
                     // Store the scene in the configuration
                     ConfigService.getConfig().set("server.scenes." + sceneName + ".id", sceneId);
 
                     // Store the scene's characters
-                    ArrayList<HashMap<String, String>> sceneChars = (ArrayList<HashMap<String, String>>) response.get("characters");
+                    ArrayList<HashMap<String, String>> sceneChars = (ArrayList<HashMap<String, String>>) response.get("sessionCharacters");
                     for(int i=0; i < sceneChars.size(); i++) {
                         HashMap<String, String> sceneChar = sceneChars.get(i);
                         String displayName = sceneChar.get("displayName");
@@ -212,8 +211,6 @@ public class SceneCommand extends CommandBase implements Command {
                     for(String character : ConfigService.getConfig().getConfigurationSection("server.scenes." + sceneName + ".characters").getKeys(false)) {
                         MessageService.sendPlayerMessage(sender, " - " + character);
                     }
-
-                    // APIService.close(sessionId);
 
                     LOG(LogType.Info, "Scene " + sceneName + " added ");
 

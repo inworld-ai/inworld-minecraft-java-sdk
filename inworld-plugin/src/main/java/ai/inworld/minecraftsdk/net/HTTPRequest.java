@@ -7,10 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-
-import org.json.simple.JSONObject;
+import java.util.Map;
 
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
@@ -30,12 +29,13 @@ public class HTTPRequest {
      * This handles POST http requests
      * @param urlString The REST url to send the request to 
      * @param inputString The stringified JSON data to send
+     * @param headers The JSONObject of the headers to send
      * @return String The stringified JSON response
      * @throws ConnectException Thrown if there was a connection issue
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String POST(String urlString, String inputString, JSONObject headers) throws ConnectException, IOException, RuntimeException { 
+    public static String POST(String urlString, String inputString, Map<String, String> headers) throws ConnectException, IOException, RuntimeException { 
         
         try {
         
@@ -61,12 +61,13 @@ public class HTTPRequest {
     /**
      * This handles GET http requests
      * @param urlString The REST url to send the request to 
+     * @param headers The JSONObject of the headers to send
      * @return String The stringified JSON response
      * @throws ConnectException Thrown if there was a connection issue
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String GET(String urlString, JSONObject headers) throws ConnectException, IOException, RuntimeException {
+    public static String GET(String urlString, Map<String, String> headers) throws ConnectException, IOException, RuntimeException {
         
         try {
         
@@ -101,53 +102,36 @@ public class HTTPRequest {
      * @throws IOException Thrown if there was an issue processing the data stream
      * @throws RuntimeException Thrown for all other exceptions
      */
-    public static String httpRequest(String urlString, String requestMethod, JSONObject headers, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
+    public static String httpRequest(String urlString, String requestMethod, Map<String, String> headers, boolean doOutput, String inputString) throws ConnectException, IOException, RuntimeException {
 
         URL url = null;
 
         try {
-
             url = new URL(urlString);
-        
         } catch (MalformedURLException e) {
-        
             LOG(LogType.Error, errorMalformedURL);
             throw new RuntimeException(e);
-        
         }
 
         HttpURLConnection con = null;
 
         try {
-
             con = (HttpURLConnection) url.openConnection();
-        
         } catch (IOException e) {
-        
             LOG(LogType.Error, errorIOException);
             throw e;
-        
         }
 
         try {
-
             con.setRequestMethod(requestMethod);
-        
         } catch (ProtocolException e) {
-        
             LOG(LogType.Error, errorProtocolException);
             throw new RuntimeException(e);
-        
         }
 
-        for(String key : headers.keySet()) {
-
+        for (String key : headers.keySet()) {
+            con.setRequestProperty(key, headers.get(key));
         }
-
-        headers.keySet().forEach(keyStr -> {
-            Object value = headers.get(keyStr.toString());
-            con.setRequestProperty(keyStr.toString(), value.toString());
-        });
 
         // Sets the headers for the request and if there is a response
         con.setRequestProperty("Content-Type", "application/json");
@@ -158,12 +142,9 @@ public class HTTPRequest {
         if (requestMethod.equals("POST")) {
 
             try {
-                
                 OutputStream os = con.getOutputStream();
-
                 byte[] input = inputString.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
-
             } catch (ConnectException e) {
                 throw e;
             } catch (IOException e) {
@@ -201,6 +182,20 @@ public class HTTPRequest {
             throw e;
         }
 
+    }
+    
+    /**
+     * Helper function to encode parameter for URL safely
+     * @param value The URL param to encode
+     * @return String The param returned encoded
+     * @throws RuntimeException Thrown if a UnsupportedEncodingException is caught
+     */
+    public static String EncodeValue(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

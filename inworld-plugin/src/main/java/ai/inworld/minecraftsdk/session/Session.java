@@ -6,6 +6,8 @@ import ai.inworld.minecraftsdk.services.MessageService;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -19,22 +21,28 @@ import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
  */
 public class Session {
         
-    // The internal character id
+    // The Inworld character id
     private final String characterId;
+    // The Inworld character name
+    private final String characterName;
     // The display name of the character/villager
     private final String displayName;
-    // The Inworld character id
+    // The internal character id
     private final String id;
+    // The unqiue per session per character instance id
+    private String instanceId;
     // The Player associated with the session
     private final Player player;
     // The Inworld scene id
     private final String sceneId;
+    // The Inworld scene name
+    private final String sceneName;
     // The session id
     private String sessionId;
 
     /**
      * This method creates a Session
-     * @param id This Inworld Session id
+     * @param id The internal character ids
      * @param player The player of the session
      * @throws ConnectException Throw if there's an error opening the connection
      * @throws IOException Throw if there's an error in data structure
@@ -59,25 +67,25 @@ public class Session {
                 throw new RuntimeException("Malformed character id \"" + this.id  + "\"");
             }
 
-            String sceneName = sceneParts[0];
-            String characterName = sceneParts[1];
+            this.sceneName = sceneParts[0];
+            this.characterName = sceneParts[1];
 
             // Checks if the scene exists in the configuration
-            Object sceneCheck = ConfigService.getConfig().get("server.scenes." + sceneName);
+            Object sceneCheck = ConfigService.getConfig().get("server.scenes." +  this.sceneName);
             if (sceneCheck == null) {
-                throw new RuntimeException("Scene \"" + sceneName  + "\" doesn't exists");
+                throw new RuntimeException("Scene \"" +  this.sceneName  + "\" doesn't exists");
             }
 
-            this.sceneId = ConfigService.getConfig().getString("server.scenes." + sceneName + ".id");
+            this.sceneId = ConfigService.getConfig().getString("server.scenes." +  this.sceneName + ".id");
 
             // Checks if the character exists in the configuration
-            Object characterCheck = ConfigService.getConfig().get("server.scenes." + sceneName + ".characters." + characterName);
+            Object characterCheck = ConfigService.getConfig().get("server.scenes." +  this.sceneName + ".characters." + this.characterName);
             if (characterCheck == null) {
-                throw new RuntimeException("Character \"" + characterName  + "\" doesn't exists");
+                throw new RuntimeException("Character \"" + this.characterName  + "\" doesn't exists");
             }
 
-            this.characterId = ConfigService.getConfig().getString("server.scenes." + sceneName + ".characters." + characterName + ".resourceName");
-            this.displayName = ConfigService.getConfig().getString("server.scenes." + sceneName + ".characters." + characterName + ".displayName");
+            this.characterId = ConfigService.getConfig().getString("server.scenes." +  this.sceneName + ".characters." + this.characterName + ".name");
+            this.displayName = ConfigService.getConfig().getString("server.scenes." +  this.sceneName + ".characters." + this.characterName + ".displayName");
 
             // Opens the session
             this.open();
@@ -115,6 +123,13 @@ public class Session {
      */
     public String getId() {
         return this.id;
+    }
+
+    /**
+     * @return The Inworld unqiue per session and character instance id
+     */
+    public String getInstanceId() {
+        return this.instanceId;
     }
 
     /**
@@ -197,18 +212,28 @@ public class Session {
         try {
             
             // Open a session
-            JSONObject response = APIService.open(this.getPlayerId().toString(), this.getSceneId(), this.getCharacterId(), this.getPlayerName());
+            JSONObject response = APIService.open(this.getSceneId());
 
             // Check that the session was created correctly
-            if (!response.containsKey("character")) {
-                throw new RuntimeException("Error SceneId doesn't exist: " + this.getSceneId());
+            if (!response.containsKey("name")) {
+                throw new RuntimeException("Error unable to add scene");
             }
-            
-            if (!response.containsKey("sessionId")) {
-                throw new RuntimeException("Error unable to start session");
+            this.sessionId = response.get("name").toString();
+
+            if (!response.containsKey("sessionCharacters")) {
+                throw new RuntimeException("Error scene not found: " + sceneId);
             }
-        
-            this.sessionId = response.get("sessionId").toString();
+
+            ArrayList<HashMap<String, String>> sceneChars = (ArrayList<HashMap<String, String>>) response.get("sessionCharacters");
+            for(int i=0; i < sceneChars.size(); i++) {
+                HashMap<String, String> sceneChar = sceneChars.get(i);
+                if( this.characterId.equals(sceneChar.get("name"))) {
+                    this.instanceId = sceneChar.get("character");
+                    return;
+                }
+            }
+
+            throw new RuntimeException("Error character not found in scene: " + this.id);
                     
         } catch ( ConnectException e ) {
             throw e;
@@ -217,8 +242,6 @@ public class Session {
         } catch( RuntimeException e ) {
             throw e;
         }
-
-        return;
 
     }
 

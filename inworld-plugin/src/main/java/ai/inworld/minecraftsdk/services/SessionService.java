@@ -39,10 +39,8 @@ public class SessionService {
      * @param plugin A reference to the Minecraft plugin
      */
     public SessionService(JavaPlugin plugin) {
-
         LOG(LogType.Info, "SessionService init");
         SessionService.plugin = plugin;
-
     }
 
     /**
@@ -75,7 +73,7 @@ public class SessionService {
                         sessions.put(session.getSessionId(), session);
                         sessionKeys.put(sessionKey, session.getSessionId());
                         playerSessions.put(player.getUniqueId().toString(), session.getSessionId());
-                        APIService.message(getPlayerSessionId(player), "Hello");
+                        APIService.message(session, player, "Hello");
                         // LOG(LogType.Info, "SessionService session created: " + sessionKey + " " + session.getSessionId());
                                         
                     } catch ( ConnectException e ) {
@@ -187,27 +185,20 @@ public class SessionService {
     public static void removePlayer(Player player) {
 
         SessionService.clearPlayerSession(player);
-
         String[] sessionKeysToParse = sessions.keySet().toArray(new String[sessions.size()]);
 
         for( String sessionId: sessionKeysToParse ) {
 
             Session session = sessions.get(sessionId);
-
             if ( session.getPlayerId() == player.getUniqueId() ) {
-
                 LOG(LogType.Info, "SessionService removePlayer " + session.getId());
-
                 String sessionKey = session.getPlayerId().toString() + "/" + session.getId();
-
                 if (!sessionKeys.containsKey(sessionKey))
                 {
                     throw new RuntimeException("Error SessionService removePlayer session does not exist in sessionKeys");
                 }
-
                 sessionKeys.remove(sessionKey);
                 sessions.remove(sessionId);
-
             }
 
         }
@@ -230,19 +221,14 @@ public class SessionService {
         try {
             
             Session session = sessions.get(sessionId);
-
             if (session == null ) {
                 LOG(LogType.Error, "SessionService session not found with id: " + sessionId);
                 return;
             }
-
             // session.close();
-
             String sessionKey = session.getPlayerId().toString() + "/" + session.getId();
-
             sessionKeys.remove(sessionKey);
             sessions.remove(sessionId);
-
 
         } catch( RuntimeException e ) {
             LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
@@ -256,13 +242,13 @@ public class SessionService {
      * @param message The message to send
      * @throws RuntimeException Throws if there are any errors sending the message
      */
-    public static void sendMessage(Player player, String message) throws RuntimeException {
+    public static void sendMessage(Session session, Player player, String message) throws RuntimeException {
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    APIService.message(getPlayerSessionId(player), message);
+                    APIService.message(session, player, "Hello");
                 } catch ( ConnectException e ) {
                     LOG(LogType.Error, "SessionService ConnectException: " + e.getMessage());
                     throw new RuntimeException("Error sending message");
@@ -270,6 +256,7 @@ public class SessionService {
                     LOG(LogType.Error, "SessionService IOException: " + e.getMessage());
                     throw new RuntimeException("Error sending message");
                 } catch( RuntimeException e ) {
+                    SessionService.clearPlayerSession(player);
                     LOG(LogType.Error, "SessionService RuntimeException: " + e.getMessage());
                     throw new RuntimeException("Error sending message");
                 }

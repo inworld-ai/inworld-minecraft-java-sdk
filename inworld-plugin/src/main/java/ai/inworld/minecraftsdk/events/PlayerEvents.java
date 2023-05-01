@@ -3,7 +3,7 @@ package ai.inworld.minecraftsdk.events;
 import ai.inworld.minecraftsdk.services.CharacterService;
 import ai.inworld.minecraftsdk.services.ConfigService;
 import ai.inworld.minecraftsdk.services.SessionService;
-import ai.inworld.minecraftsdk.services.ServerService;
+import ai.inworld.minecraftsdk.session.Session;
 
 import static ai.inworld.minecraftsdk.utils.PlayerUtils.setFace;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
@@ -155,12 +155,14 @@ public class PlayerEvents implements Listener {
             // Player on the server
             event.setCancelled(true);
             String message = event.getMessage();
-            LOG(LogType.Info, "Player message " + player.getPlayerListName() + " " + message);
+            // LOG(LogType.Info, "Player message " + player.getPlayerListName() + " " + message);
             try {
+                // Gets the current active session
+                Session session = SessionService.getSession(SessionService.getPlayerSessionId(player));
                 // Sends the player message to the player
                 player.sendMessage(ChatColor.GREEN + player.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + message);
                 // Sends the player message to the Inworld REST service.
-                SessionService.sendMessage(player, message);
+                SessionService.sendMessage(session, player, message);
             } catch( RuntimeException e ) {
                 player.sendMessage(ChatColor.RED + e.getMessage());
             }

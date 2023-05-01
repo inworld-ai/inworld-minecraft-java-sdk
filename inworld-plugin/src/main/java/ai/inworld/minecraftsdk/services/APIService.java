@@ -1,19 +1,25 @@
 package ai.inworld.minecraftsdk.services;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import ai.inworld.minecraftsdk.session.Session;
+
 import static ai.inworld.minecraftsdk.net.HTTPRequest.GET;
 import static ai.inworld.minecraftsdk.net.HTTPRequest.POST;
-import static ai.inworld.minecraftsdk.services.ServerService.SERVER_ID;
-import static ai.inworld.minecraftsdk.services.ServerService.SERVER_IP;
+import static ai.inworld.minecraftsdk.net.HTTPRequest.EncodeValue;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LOG;
 import static ai.inworld.minecraftsdk.utils.logger.Logger.LogType;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This service class handles the Inworld REST API calls. If it's a POST call it builds the stringified JSON object
@@ -22,35 +28,26 @@ public final class APIService {
     
     /**
      * This opens an Inworld session
-     * @param uid The Minecraft Player's UID
      * @param sceneId The Inworld Scene Id for the character
-     * @param characterId The Inworld Character Id
-     * @param playerName The display name of the Minecraft Player
      * @return JSONObject The response object containing the Inworld session Id and character information
      * @throws ConnectException Thrown if there was a connection error
      * @throws IOException Thrown if there was an error in the data
      * @throws RuntimeException Thrown for all other errors
      */
-    public static JSONObject open(String uid, String sceneId, String characterId, String playerName) throws ConnectException, IOException, RuntimeException {
+    public static JSONObject open(String sceneId) throws ConnectException, IOException, RuntimeException {
        
         try {
 
             // Create the JSON object
             JSONObject data = new JSONObject();
-            data.put("uid", uid);
-            data.put("sceneId", sceneId);
-            data.put("characterId", characterId);
-            data.put("playerName", playerName);
-            data.put("serverId", SERVER_ID);
+            data.put("name", sceneId);
             
-            JSONObject headers = new JSONObject();
+            Map<String, String> headers = new HashMap<String, String>();
             headers.put("authorization", getAuthHeader());
             headers.put("Grpc-Metadata-session-id", "inworld_wonderland_roblox:00000000-00000000-00000000-00000000");
-
-            // LOG(LogType.Info, data.toJSONString());
     
             // Stringify the JSON object and send the request to the Inworld REST service
-            String jsonString = POST(APIService.getAPIHost() + "/session/open", data.toJSONString(), headers);
+            String jsonString = POST(APIService.getAPIHost() + sceneId + ":openSession", data.toJSONString(), headers);
             if (jsonString == null) {
                 return null;
             }
@@ -152,26 +149,54 @@ public final class APIService {
 
     /**
      * This sends a message to an active session
-     * @param sessionId The Inworld session id
+     * @param session The player's active session
+     * @param player The player sending the message
      * @param message The message to send
      * @throws ConnectException Thrown if there was a connection error
      * @throws IOException Thrown if there was an error in the data
      * @throws RuntimeException Thrown for all other errors
      */
-    public static void message(String sessionId, String message) throws ConnectException, IOException, RuntimeException {
+    public static void message(Session session, Player player, String message) throws ConnectException, IOException, RuntimeException {
         
         try {
             
-            // Create the JSON object
-            JSONObject data = new JSONObject();
-            data.put("message", message);
+            // Create the URL parameters
+            Map<String, String> data = new HashMap<String, String>();
+            data.put("character", session.getId());
+            data.put("sessionId", session.getSessionId());
+            data.put("characterId", session.getInstanceId());
+            data.put("text", EncodeValue(message));
+            data.put("endUserFullname", player.getDisplayName());
+            data.put("endUserId", player.getUniqueId().toString());
             
-            JSONObject headers = new JSONObject();
+            // Encode the URL parameters
+            String urlParams = data.keySet().stream().map(key -> key + "=" + data.get(key)).collect(Collectors.joining("&"));
+
+            // Build the HTTP Request headers
+            Map<String, String> headers = new HashMap<String, String>();
             headers.put("authorization", getAuthHeader());
-            headers.put("Grpc-Metadata-session-id", "");
+            headers.put("Grpc-Metadata-session-id", "inworld_wonderland_roblox:00000000-00000000-00000000-00000000");
 
             // Sends the message to the service
-            POST(APIService.getAPIHost() + "/session/" + sessionId + "/message", data.toJSONString(), headers);
+            String jsonString = GET(APIService.getAPIHost() + session.getCharacterId() + ":simpleSendText?" + urlParams, headers);
+            if (jsonString == null) {
+                throw new RuntimeException("No response for sending message.");
+            }
+
+            // Converts the returned data into a JSON object
+            JSONObject result = (JSONObject) JSONValue.parse(jsonString);
+            if (!result.containsKey("textList")) {
+                throw new RuntimeException("No text messages in response.");
+            }
+
+            String text = "";
+            JSONArray raw = (JSONArray) result.get("textList");
+            for (int i=0; i < raw.size(); i++ ) {
+                text += raw.get(i);
+            }
+            session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + text);
+
+            return;
         
         } catch ( ConnectException e) {
             throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
@@ -200,8 +225,7 @@ public final class APIService {
      * @return String The host to use for the GET/POST requests
      */
     public static String getAPIHost() throws RuntimeException {
-        String host = "https://studio.inworld.ai/v1/";
-        return host;
+        return "https://studio.inworld.ai/v1/";
     }
 
 }
