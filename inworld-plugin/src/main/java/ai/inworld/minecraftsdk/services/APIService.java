@@ -38,13 +38,14 @@ public final class APIService {
        
         try {
 
+            // LOG(LogType.Info, "APIService open: " + sceneId);
+
             // Create the JSON object
             JSONObject data = new JSONObject();
             data.put("name", sceneId);
             
             Map<String, String> headers = new HashMap<String, String>();
             headers.put("authorization", getAuthHeader());
-            headers.put("Grpc-Metadata-session-id", "inworld_wonderland_roblox:00000000-00000000-00000000-00000000");
     
             // Stringify the JSON object and send the request to the Inworld REST service
             String jsonString = POST(APIService.getAPIHost() + sceneId + ":openSession", data.toJSONString(), headers);
@@ -66,87 +67,6 @@ public final class APIService {
 
     }
 
-    // /**
-    //  * This closes an Inworld session
-    //  * @param sessionId The session id to close
-    //  * @throws ConnectException Thrown if there was a connection error
-    //  * @throws IOException Thrown if there was an error in the data
-    //  * @throws RuntimeException Thrown for all other errors
-    //  */
-    // public static void close(String sessionId) throws ConnectException, IOException, RuntimeException {
-        
-    //     try {
-            
-    //         // Sends the close request to the Inworld REST service
-    //         GET(APIService.getAPIHost() + "/session/" + sessionId + "/close");
-        
-    //     } catch ( ConnectException e) {
-    //         throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
-    //     } catch ( IOException e) {
-    //         throw e;
-    //     } catch ( RuntimeException e) {
-    //         throw e;
-    //     }
-        
-    // }
-
-    // /**
-    //  * This closes all open Inworld sessions by a Minecraft Player's UID
-    //  * @param playerId The Minecraft Player's UID
-    //  * @throws ConnectException Thrown if there was a connection error
-    //  * @throws IOException Thrown if there was an error in the data
-    //  * @throws RuntimeException Thrown for all other errors
-    //  */
-    // public static void closeAllByPlayerId(String playerId) throws ConnectException, IOException, RuntimeException {
-        
-    //     try {
-            
-    //         // Sends the close request to the Inworld REST service
-    //         GET(APIService.getAPIHost() + "/session/closeall/" + playerId + "/server/" + ServerService.SERVER_ID);
-        
-    //     } catch ( ConnectException e) {
-    //         throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
-    //     } catch ( IOException e) {
-    //         // throw e;
-    //     } catch ( RuntimeException e) {
-    //         LOG(LogType.Error, "APIServer closeAllByPlayerId " + e.getMessage());
-    //         // throw e;
-    //     }
-        
-    // }
-
-    // /**
-    //  * This retrieves any events on the Inworld REST service
-    //  * @return ArrayList<JSONObject> A list of events from the Inworld REST service
-    //  * @throws ConnectException Thrown if there was a connection error
-    //  * @throws IOException Thrown if there was an error in the data
-    //  * @throws RuntimeException Thrown for all other errors
-    //  */
-    // public static ArrayList<JSONObject> getEvents() throws ConnectException, IOException, RuntimeException {
-
-    //     try {
-            
-    //         // Sends the request to the Inworld REST service to retrieve all events
-    //         String jsonString = GET(APIService.getAPIHost() + "/events");
-    //         if (jsonString == null) {
-    //             return null;
-    //         }
-
-    //         // Processes the string response into an array of JSONObjects
-    //         ArrayList<JSONObject> jsonObjects = (ArrayList<JSONObject>) JSONValue.parse(jsonString);
-    //         return jsonObjects;
-
-    //     } catch ( ConnectException e) {
-    //         throw new ConnectException("Unable to connect to Inworld REST API Host");
-    //     } catch ( IOException e) {
-    //         throw e;
-    //     } catch ( RuntimeException e) {
-    //         LOG(LogType.Error, "APIServer getEvents " + e.getMessage());
-    //         throw e;
-    //     }
-
-    // }
-
     /**
      * This sends a message to an active session
      * @param session The player's active session
@@ -160,6 +80,8 @@ public final class APIService {
         
         try {
             
+            // LOG(LogType.Info, "APIService message: " + session.getDisplayName());
+
             // Create the URL parameters
             Map<String, String> data = new HashMap<String, String>();
             data.put("character", session.getId());
@@ -169,13 +91,15 @@ public final class APIService {
             data.put("endUserFullname", player.getDisplayName());
             data.put("endUserId", player.getUniqueId().toString());
             
+            // LOG(LogType.Info, "APIService message: " + data.toString());
+
             // Encode the URL parameters
             String urlParams = data.keySet().stream().map(key -> key + "=" + data.get(key)).collect(Collectors.joining("&"));
 
             // Build the HTTP Request headers
             Map<String, String> headers = new HashMap<String, String>();
             headers.put("authorization", getAuthHeader());
-            headers.put("Grpc-Metadata-session-id", "inworld_wonderland_roblox:00000000-00000000-00000000-00000000");
+            headers.put("Grpc-Metadata-session-id", session.getSessionId());
 
             // Sends the message to the service
             String jsonString = GET(APIService.getAPIHost() + session.getCharacterId() + ":simpleSendText?" + urlParams, headers);
@@ -195,6 +119,68 @@ public final class APIService {
                 text += raw.get(i);
             }
             session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + text);
+
+            return;
+        
+        } catch ( ConnectException e) {
+            throw new ConnectException("Unable to connect to API Host: " + getAPIHost());
+        } catch ( IOException e) {
+            throw e;
+        } catch ( RuntimeException e) {
+            throw e;
+        }
+        
+    }
+
+    /**
+     * This sends a scene trigger or character goal/action to an active session
+     * @param session The player's active session
+     * @param player The player sending the message
+     * @param triggerId The id of the trigger or goal/action to send
+     * @throws ConnectException Thrown if there was a connection error
+     * @throws IOException Thrown if there was an error in the data
+     * @throws RuntimeException Thrown for all other errors
+     */
+    public static void trigger(Session session, Player player, String triggerId) throws ConnectException, IOException, RuntimeException {
+        
+        try {
+            
+            LOG(LogType.Info, "APIService trigger: " + triggerId);
+
+            // Create the JSON object
+
+            JSONObject data = new JSONObject();
+            JSONObject customEvent = new JSONObject();
+            customEvent.put("customEvent", "workspaces/" + session.getWorkspaceName() + "/triggers/" + triggerId);
+            data.put("customEvent", customEvent);
+            
+            // LOG(LogType.Info, "APIService message: " + data.toString());
+
+            // Build the HTTP Request headers
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("authorization", getAuthHeader());
+            headers.put("Grpc-Metadata-session-id", session.getSessionId());
+
+            // Sends the message to the service
+            String jsonString = POST(APIService.getAPIHost() + "workspaces/" + session.getWorkspaceName() 
+                + "/sessions/" + session.getSessionId() + "/sessionCharacters/" + session.getInstanceId() 
+                + ":sendCustomEvent", data.toJSONString(), headers);
+            if (jsonString == null) {
+                throw new RuntimeException("No response for sending message.");
+            }
+
+            // Converts the returned data into a JSON object
+            JSONObject result = (JSONObject) JSONValue.parse(jsonString);
+            LOG(LogType.Info, "APIService trigger results: " + result.toString());
+
+            if (result.containsKey("textList")) {
+                String text = "";
+                JSONArray raw = (JSONArray) result.get("textList");
+                for (int i=0; i < raw.size(); i++ ) {
+                    text += raw.get(i);
+                }
+                session.getPlayer().sendMessage(ChatColor.RED + session.getDisplayName() + ": " + ChatColor.GRAY + "» " + ChatColor.WHITE + text);
+            }
 
             return;
         

@@ -39,6 +39,8 @@ public class Session {
     private final String sceneName;
     // The session id
     private String sessionId;
+    // The Inworld workspace name
+    private final String workspaceName;
 
     /**
      * This method creates a Session
@@ -77,6 +79,14 @@ public class Session {
             }
 
             this.sceneId = ConfigService.getConfig().getString("server.scenes." +  this.sceneName + ".id");
+
+            // Splits the Inworld Character id into parts
+            String[] sceneIdParts = this.sceneId.split("\\/");
+            if (sceneIdParts.length != 4) {
+                throw new RuntimeException("Malformed scene id \"" + this.sceneId  + "\"");
+            }
+            
+            this.workspaceName = sceneIdParts[1];
 
             // Checks if the character exists in the configuration
             Object characterCheck = ConfigService.getConfig().get("server.scenes." +  this.sceneName + ".characters." + this.characterName);
@@ -172,34 +182,13 @@ public class Session {
         return this.sessionId;
     }
 
-    // /**
-    //  * This method closes the session
-    //  * @throws ConnectException Throw if there's an error closes the connection
-    //  * @throws IOException Throw if there's an error in data structure
-    //  * @throws RuntimeException Thrown if there's any other errors
-    //  */
-    // public void close() throws ConnectException, IOException, RuntimeException {
-
-    //     try {
-
-    //         if (this.sessionId == null ) {
-    //             throw new RuntimeException("Error session not open");
-    //         }
-
-    //         // Close the session
-    //         APIService.close(this.sessionId);
-
-    //     } catch ( ConnectException e ) {
-    //         throw e;
-    //     } catch ( IOException e ) {
-    //         throw e;
-    //     } catch( RuntimeException e ) {
-    //         throw e;
-    //     }
-
-    //     return;
-
-    // }
+    /**
+     * @return The Inworld workspace name
+     */
+    public String getWorkspaceName() 
+    {
+        return this.workspaceName;
+    }
 
     /**
      * This method opens the session
