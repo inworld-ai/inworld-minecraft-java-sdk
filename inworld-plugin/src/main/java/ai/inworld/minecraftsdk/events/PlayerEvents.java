@@ -79,7 +79,6 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         LOG(LogType.Info, "Player joined " + player.getPlayerListName());
-        // ServerService.start();
     }
 
     /**
@@ -101,14 +100,14 @@ public class PlayerEvents implements Listener {
             // LOG(LogType.Info, "Player moved from: " + event.getFrom());
             // LOG(LogType.Info, "Player moved to: " + event.getTo());
             
-            Double diffX = fromLoc.getX() - toLoc.getX();
-            Double diffY = fromLoc.getY() - toLoc.getY();
-            Double diffZ = fromLoc.getZ() - toLoc.getZ();
+            Double diffX = Math.abs(fromLoc.getX() - toLoc.getX());
+            Double diffY = Math.abs(fromLoc.getY() - toLoc.getY());
+            Double diffZ = Math.abs(fromLoc.getZ() - toLoc.getZ());
             
-            // Determines if a player has moved. Currently is allows any XY movement
-            if ( diffX > 0 || diffY > 0 || diffX > 0) {
+            // Determines if a player has moved.
+            if ( diffX > 0 || diffY > 0 || diffZ > 0) {
                 // LOG(LogType.Info, "Player moved");
-                // Clears the session but does not close it
+                // Clears the active session
                 SessionService.clearPlayerSession(player);
             }
 
@@ -128,14 +127,6 @@ public class PlayerEvents implements Listener {
         // Clears and closes all session for the player
         SessionService.removePlayer(player);
         LOG(LogType.Info, "Player quit " + player.getPlayerListName());
-        List<Player> list = new ArrayList<>(Bukkit.getOnlinePlayers());
-        // LOG(LogType.Info, "Player list " + list.size());
-        // Stopping the thread if the last person leaves the server. 
-        // Note: The size of users will be 1 as the last person leaves because this is called before
-        // the event reaches the Minecraft server.
-        if (list.size() <= 1) {
-            // ServerService.stop();
-        }
     }
 
     /**
